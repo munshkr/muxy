@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  muxy:
+    build: .
+    command: gunicorn muxy.wsgi:application --workers 3 --bind 0.0.0.0:8000
+    image: muxy:latest
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/src/app
+    stdin_open: true
+    tty: true
+    ports:
+      - 8000:8000
+
+  nginx-rtmp:
+    build: ./docker/nginx-rtmp/
+    ports:
+      - 1935:1935
+    depends_on:
+      - muxy
