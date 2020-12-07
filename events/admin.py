@@ -37,7 +37,8 @@ class StreamAdmin(admin.ModelAdmin):
     get_participant_name.admin_order_field = 'participant__name'
 
     def get_date_range(self, obj):
-        return f'{obj.starts_at} - {obj.ends_at}'
+        return '{starts_at} - {obj.ends_at}'.format(starts_at=obj.starts_at,
+                                                    ends_at=obj.ends_at)
 
     get_date_range.short_description = 'Date range'
     get_date_range.admin_order_field = ('starts_at', 'ends_at')

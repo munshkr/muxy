@@ -27,7 +27,7 @@ class Participant(models.Model):
     url = models.URLField(blank=True)
 
     def __str__(self):
-        return f'{self.name} <{self.email}>'
+        return '{name} <{email}>'.format(name=self.name, email=self.email)
 
 
 class Event(models.Model):
@@ -40,7 +40,8 @@ class Event(models.Model):
     participants = models.ManyToManyField(Participant, through='Stream')
 
     def __str__(self):
-        return f'{self.name} ({self.starts_at} - {self.ends_at})'
+        return '{name} ({starts_at} - {ends_at})'.format(
+            name=self.name, starts_at=self.starts_at, ends_at=self.ends_at)
 
     def is_valid_at(self, at):
         return self.active and self.starts_at <= at and at < self.ends_at
@@ -55,7 +56,11 @@ class Stream(models.Model):
     live_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return f'{self.event.name}: {self.participant} ({self.starts_at} - {self.ends_at})'
+        return '{event_name}: {participant_name} ({starts_at} - {ends_at})'.format(
+            event_name=self.event.name,
+            participant_name=self.participant.name,
+            starts_at=self.starts_at,
+            ends_at=self.ends_at)
 
     def is_valid_at(self, at):
         return self.event.is_valid_at(
@@ -80,4 +85,5 @@ class StreamingService(models.Model):
     key = models.CharField(max_length=200)
 
     def __str__(self):
-        return f'{self.event.name} - {self.kind}'
+        return '{event_name} - {kind}'.format(event_name=self.event.name,
+                                              kind=self.kind)
