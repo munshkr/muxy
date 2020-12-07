@@ -20,14 +20,9 @@ def on_publish(request):
 
     now = timezone.now()
 
-    # Check if stream is valid:
-    # 1. Event is active
-    # 2. Stream key is for current event slot
-    if not stream.event.is_valid_at(now):
-        print("Event is not active at %s" % (now))
-        return HttpResponseForbidden("Event is not active")
+    # Check if stream is valid
     if not stream.is_valid_at(now):
-        print("Stream is not valid at %s" % (now))
+        print("[PUBLISH] Stream is not valid at %s" % (now))
         return HttpResponseForbidden("Stream is not valid")
 
     # Set the stream live
@@ -47,6 +42,19 @@ def on_publish_done(request):
     Stream.objects.filter(stream_key=stream_key).update(live_at=None)
 
     # Response is ignored.
+    return HttpResponse("OK")
+
+
+@require_POST
+def on_update(request):
+    stream_key = request.POST['name']
+    stream = get_object_or_404(Stream, stream_key=stream_key)
+
+    now = timezone.now()
+    if not stream.is_valid_at(now):
+        print("[UPDATE] Stream is not valid at %s" % (now))
+        return HttpResponseForbidden("Stream is not valid")
+
     return HttpResponse("OK")
 
 

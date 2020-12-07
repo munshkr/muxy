@@ -58,7 +58,8 @@ class Stream(models.Model):
         return f'{self.event.name}: {self.participant} ({self.starts_at} - {self.ends_at})'
 
     def is_valid_at(self, at):
-        return self.starts_at <= at and at < self.ends_at
+        return self.event.is_valid_at(
+            at) and self.starts_at <= at and at < self.ends_at
 
 
 class StreamingService(models.Model):
