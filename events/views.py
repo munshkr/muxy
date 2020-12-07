@@ -18,23 +18,19 @@ def on_publish(request):
     # Lookup the activity and verify the publisher is allowed to stream.
     stream = get_object_or_404(Stream, stream_key=stream_key)
 
+    now = timezone.now()
+
     # Check if stream is valid:
-    # 1. Stream key is for current event slot
-    # 2. Event is active
-    # if not stream.user.is_active:
-    # return HttpResponseForbidden("Stream key is not currently valid")
+    # 1. Event is active
+    # 2. Stream key is for current event slot
+    if not stream.event.is_valid_at(now):
+        return HttpResponseForbidden("Event is not active")
+    if not stream.is_valid_at(now):
+        return HttpResponseForbidden("Stream is not valid")
 
     # Set the stream live
-    stream.live_at = timezone.now()
+    stream.live_at = now
     stream.save()
-
-    # # Redirect to the event RTMP server
-    # parsed = urlparse(stream.event.rtmp_url)
-    # replaced = parsed._replace(scheme='http')
-    # url = replaced.geturl()
-    # print("URL:", url)
-
-    # return HttpResponseRedirect(url)
 
     return HttpResponse("OK")
 
