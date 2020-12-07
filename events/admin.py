@@ -13,7 +13,8 @@ class EventAdmin(admin.ModelAdmin):
 
 class EventSlotAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_event_name', 'starts_at', 'ends_at',
-                    'get_participant_name')
+                    'get_participant_name', 'live_at', 'stream_key')
+    exclude = ('live_at', )
 
     def get_event_name(self, obj):
         return obj.event.name
