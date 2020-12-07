@@ -1,10 +1,11 @@
+import json
 from urllib.parse import urlparse
 
 from django.http import (HttpResponse, HttpResponseForbidden,
                          HttpResponseRedirect)
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 
 from events.models import EventSlot
 
@@ -21,7 +22,7 @@ def on_publish(request):
     # 1. Stream key is for current event slot
     # 2. Event is active
     # if not stream.user.is_active:
-    # return HttpResponseForbidden("inactive user")
+    # return HttpResponseForbidden("Stream key is not currently valid")
 
     # Set the stream live
     stream.live_at = timezone.now()
@@ -50,3 +51,18 @@ def on_publish_done(request):
 
     # Response is ignored.
     return HttpResponse("OK")
+
+
+@require_GET
+def stream_options(request):
+    stream_key = request.GET['key']
+    stream = get_object_or_404(EventSlot, stream_key=stream_key)
+
+    event = stream.event
+    services = event.streamingservice_set.all()
+    services = [
+        dict(kind=s.kind, server=s.server, key=s.key) for s in services
+    ]
+
+    data = dict(name=event.name, services=services)
+    return HttpResponse(json.dumps(data))

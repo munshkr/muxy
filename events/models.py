@@ -37,7 +37,6 @@ class Event(models.Model):
     ends_at = models.DateTimeField()
     active = models.BooleanField(default=True)
     participants = models.ManyToManyField(Participant, through='EventSlot')
-    rtmp_url = models.CharField(blank=True, max_length=254)
 
     def __str__(self):
         return f'{self.name} ({self.starts_at} - {self.ends_at})'
@@ -53,3 +52,24 @@ class EventSlot(models.Model):
 
     def __str__(self):
         return f'{self.event.name}: {self.participant} ({self.starts_at} - {self.ends_at})'
+
+
+class StreamingService(models.Model):
+    YOUTUBE = 'YT'
+    TWITCH = 'TW'
+    CUSTOM = 'CS'
+    STREAMING_SERVICES = [
+        (CUSTOM, 'Custom'),
+        (YOUTUBE, 'Youtube'),
+        (TWITCH, 'Twitch'),
+    ]
+
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    kind = models.CharField(max_length=2,
+                            default=YOUTUBE,
+                            choices=STREAMING_SERVICES)
+    server = models.CharField(max_length=200)
+    key = models.CharField(max_length=200)
+
+    def __str__(self):
+        return f'{self.event.name} - {self.kind}'

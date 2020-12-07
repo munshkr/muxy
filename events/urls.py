@@ -8,4 +8,5 @@ urlpatterns = [
     path('rtmp/on-publish-done/',
          csrf_exempt(views.on_publish_done),
          name='publish-done'),
+    path('stream-options/', views.stream_options, name='stream-options')
 ]
