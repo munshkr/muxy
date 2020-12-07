@@ -24,8 +24,10 @@ def on_publish(request):
     # 1. Event is active
     # 2. Stream key is for current event slot
     if not stream.event.is_valid_at(now):
+        print("Event is not active at %s" % (now))
         return HttpResponseForbidden("Event is not active")
     if not stream.is_valid_at(now):
+        print("Stream is not valid at %s" % (now))
         return HttpResponseForbidden("Stream is not valid")
 
     # Set the stream live

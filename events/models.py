@@ -42,9 +42,8 @@ class Event(models.Model):
     def __str__(self):
         return f'{self.name} ({self.starts_at} - {self.ends_at})'
 
-    @property
     def is_valid_at(self, at):
-        return self.active and self.starts_at >= at and self.ends_at < at
+        return self.active and self.starts_at <= at and at < self.ends_at
 
 
 class Stream(models.Model):
@@ -58,9 +57,8 @@ class Stream(models.Model):
     def __str__(self):
         return f'{self.event.name}: {self.participant} ({self.starts_at} - {self.ends_at})'
 
-    @property
     def is_valid_at(self, at):
-        return self.active and self.starts_at >= at and self.ends_at < at
+        return self.starts_at <= at and at < self.ends_at
 
 
 class StreamingService(models.Model):
