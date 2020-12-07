@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from events.forms import StreamingServiceForm
-from events.models import Event, EventSlot, Participant, StreamingService
+from events.models import Event, Stream, Participant, StreamingService
 
 
 class StreamingServiceInline(admin.TabularInline):
@@ -19,7 +19,7 @@ class EventAdmin(admin.ModelAdmin):
     ]
 
 
-class EventSlotAdmin(admin.ModelAdmin):
+class StreamAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_event_name', 'starts_at', 'ends_at',
                     'get_participant_name', 'live_at', 'stream_key')
     exclude = ('live_at', )
@@ -50,5 +50,5 @@ class StreamingServiceAdmin(admin.ModelAdmin):
 
 admin.site.register(Participant, ParticipantAdmin)
 admin.site.register(Event, EventAdmin)
-admin.site.register(EventSlot, EventSlotAdmin)
+admin.site.register(Stream, StreamAdmin)
 admin.site.register(StreamingService, StreamingServiceAdmin)

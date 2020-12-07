@@ -36,13 +36,13 @@ class Event(models.Model):
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
     active = models.BooleanField(default=True)
-    participants = models.ManyToManyField(Participant, through='EventSlot')
+    participants = models.ManyToManyField(Participant, through='Stream')
 
     def __str__(self):
         return f'{self.name} ({self.starts_at} - {self.ends_at})'
 
 
-class EventSlot(models.Model):
+class Stream(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     starts_at = models.DateTimeField()

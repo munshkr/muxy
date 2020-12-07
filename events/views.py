@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 
-from events.models import EventSlot
+from events.models import Stream
 
 
 @require_POST
@@ -15,8 +15,8 @@ def on_publish(request):
     # nginx-rtmp makes the stream name available in the POST body via `name`
     stream_key = request.POST['name']
 
-    # Lookup the stream and verify the publisher is allowed to stream.
-    stream = get_object_or_404(EventSlot, stream_key=stream_key)
+    # Lookup the activity and verify the publisher is allowed to stream.
+    stream = get_object_or_404(Stream, stream_key=stream_key)
 
     # Check if stream is valid:
     # 1. Stream key is for current event slot
@@ -36,7 +36,6 @@ def on_publish(request):
 
     # return HttpResponseRedirect(url)
 
-    print("API: Publish OK")
     return HttpResponse("OK")
 
 
@@ -47,7 +46,7 @@ def on_publish_done(request):
     stream_key = request.POST['name']
 
     # Set the stream offline
-    EventSlot.objects.filter(stream_key=stream_key).update(live_at=None)
+    Stream.objects.filter(stream_key=stream_key).update(live_at=None)
 
     # Response is ignored.
     return HttpResponse("OK")
@@ -56,7 +55,7 @@ def on_publish_done(request):
 @require_GET
 def stream_options(request):
     stream_key = request.GET['key']
-    stream = get_object_or_404(EventSlot, stream_key=stream_key)
+    stream = get_object_or_404(Stream, stream_key=stream_key)
 
     event = stream.event
     services = event.streamingservice_set.all()
