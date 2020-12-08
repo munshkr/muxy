@@ -7,6 +7,42 @@ stream herself to public channels or other streaming services.
 
 ## Install
 
+Clone repository or download zipfile and extract somewhere.
+
+Create virtual environment and activate:
+
+```
+virtualenv -p python3.7 .venv
+source .venv/bin/activate
+```
+
+Now, run migrations to create and prepare database:
+
+```
+./manage.py migrate
+```
+
+Then, create a super user to enter admin panel:
+
+```
+./manage.py createsuperuser
+```
+
+Finally, collect static files for admin panel:
+
+```
+./manage.py collectstatic
+```
+
+To run server locally, use:
+
+```
+./manage.py runserver
+```
+
+
+## Deploy
+
 ### Configure Muxy server
 
 Copy service files for gunicorn:
