@@ -1,6 +1,7 @@
 import uuid
 
 from django.core import validators
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.forms.fields import URLField as FormURLField
 from django.utils import timezone
@@ -33,8 +34,13 @@ class Event(models.Model):
         return '{name} ({starts_at} - {ends_at})'.format(
             name=self.name, starts_at=self.starts_at, ends_at=self.ends_at)
 
+    # FIXME: Rename to is_active_at
     def is_valid_at(self, at):
         return self.active and self.starts_at <= at and at < self.ends_at
+
+    def clean(self):
+        if self.starts_at and self.ends_at and self.ends_at < self.starts_at:
+            raise ValidationError("Event ends before starting")
 
 
 class Stream(models.Model):
@@ -53,6 +59,15 @@ class Stream(models.Model):
             starts_at=self.starts_at,
             ends_at=self.ends_at)
 
+    # FIXME: Rename to is_active_at
     def is_valid_at(self, at):
         return self.event.is_valid_at(
             at) and self.starts_at <= at and at < self.ends_at
+
+    def clean(self):
+        if self.pk and self.starts_at and self.ends_at:
+            other_streams = Stream.objects.filter(
+                starts_at__lt=self.ends_at,
+                ends_at__gt=self.starts_at).exclude(pk=self.pk)
+            if other_streams.exists():
+                raise ValidationError("There are other simultaneous streams")
