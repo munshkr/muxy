@@ -2,7 +2,7 @@
 Description=Muxy gunicorn socket
 
 [Socket]
-ListenStream=/run/muxy_gunicorn.sock
+ListenStream=/run/muxy-gunicorn.sock
 
 [Install]
 WantedBy=sockets.target

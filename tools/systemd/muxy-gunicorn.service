@@ -1,6 +1,6 @@
 [Unit]
 Description=Muxy gunicorn daemon
-Requires=muxy_gunicorn.socket
+Requires=muxy-gunicorn.socket
 After=network.target
 
 [Service]
@@ -10,7 +10,7 @@ WorkingDirectory=/home/sammy/muxy
 ExecStart=/home/sammy/muxy/.venv/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
-          --bind unix:/run/muxy_gunicorn.sock \
+          --bind unix:/run/muxy-gunicorn.sock \
           muxy.wsgi:application
 
 [Install]

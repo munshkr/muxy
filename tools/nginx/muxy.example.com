@@ -1,5 +1,5 @@
 server {
-    listen 4567;
+    listen 80;
     server_name muxy.example.com;
 
     location = /favicon.ico { access_log off; log_not_found off; }

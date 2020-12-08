@@ -55,10 +55,10 @@ To run server locally, use:
 Copy service files for gunicorn:
 
 ```bash
-sudo cp tools/systemd/muxy_gunicorn.* /etc/systemd/system/
+sudo cp tools/systemd/muxy-gunicorn.* /etc/systemd/system/
 ```
 
-Edit `/etc/systemd/system/muxy_gunicorn.service` to replace path to muxy on
+Edit `/etc/systemd/system/muxy-gunicorn.service` to replace path to muxy on
 `ExecStart`, and correctly set `User` and `Group`.
 
 Copy nginx site config:
@@ -72,7 +72,8 @@ Rename file to correct server name and edit file to fix server name.
 ### Configure nginx-rtmp to set validation
 
 The following is an `nginx-rtmp` sample configuration, that configures an RTMP
-application to use Muxy allow/deny mechanism.
+application to use Muxy allow/deny mechanism.  Remember to replace
+`muxy.example.com` with your Muxy hostname.
 
 ```
 rtmp {
@@ -83,14 +84,14 @@ rtmp {
 
         # HTTP callback when a stream starts publishing.
         # Returns 2xx only if publisher is allowed to publish now.
-        on_publish http://localhost:4567/events/rtmp/on-publish/;
+        on_publish http://muxy.example.com/events/rtmp/on-publish/;
 
         # Called when a stream stops publishing.  Response is ignored.
-        on_publish_done http://localhost:4567/events/rtmp/on-publish-done/;
+        on_publish_done http://muxy.example.com/events/rtmp/on-publish-done/;
 
         # Called with a period of notify_update_timeout,
         # to force disconnect publisher when her allotted time ends.
-        on_update http://localhost:4567/events/rtmp/on-update/;
+        on_update http://muxy.example.com/events/rtmp/on-update/;
     }
 }
 ```
