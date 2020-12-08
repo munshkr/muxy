@@ -31,8 +31,7 @@ class Event(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return '{name} ({starts_at} - {ends_at})'.format(
-            name=self.name, starts_at=self.starts_at, ends_at=self.ends_at)
+        return self.name
 
     # FIXME: Rename to is_active_at
     def is_valid_at(self, at):
