@@ -55,19 +55,50 @@ To run server locally, use:
 Copy service files for gunicorn:
 
 ```bash
-sudo cp tools/systemd/muxy-gunicorn.* /etc/systemd/system/
+sudo cp tools/systemd/muxy-gunicorn.s* /etc/systemd/system/
 ```
 
 Edit `/etc/systemd/system/muxy-gunicorn.service` to replace path to muxy on
 `ExecStart`, and correctly set `User` and `Group`.
 
+Start and enable service for gunicorn:
+
+```bash
+sudo systemctl start muxy-gunicorn
+sudo systemctl enable muxy-gunicorn
+```
+
+Check if service is running correctly with:
+
+```bash
+sudo systemctl status muxy-gunicorn
+```
+
 Copy nginx site config:
 
 ```bash
-sudo cp tools/nginx/muxy.example.com /etc/nginx/conf.d/sites-available/
+sudo cp tools/nginx/muxy.example.com /etc/nginx/sites-available/
 ```
 
 Rename file to correct server name and edit file to fix server name.
+
+Then, enable site config on Nginx:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/muxy.example.com /etc/nginx/sites-enabled/
+```
+
+Check for syntax errors on config before restarting nginx:
+
+```bash
+sudo nginx -t
+```
+
+If everything went OK, restart Nginx:
+
+```bash
+sudo systemctl restart nginx
+```
 
 ### Configure nginx-rtmp to set validation
 
