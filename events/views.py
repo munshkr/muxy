@@ -56,18 +56,3 @@ def on_update(request):
         return HttpResponseForbidden("Stream is not valid")
 
     return HttpResponse("OK")
-
-
-@require_GET
-def stream_options(request):
-    stream_key = request.GET['key']
-    stream = get_object_or_404(Stream, stream_key=stream_key)
-
-    event = stream.event
-    services = event.streamingservice_set.all()
-    services = [
-        dict(kind=s.kind, server=s.server, key=s.key) for s in services
-    ]
-
-    data = dict(name=event.name, services=services)
-    return HttpResponse(json.dumps(data))

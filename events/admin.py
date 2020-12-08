@@ -1,11 +1,6 @@
 from django.contrib import admin
 
-from events.forms import StreamingServiceForm
-from events.models import Event, Stream, Participant, StreamingService
-
-
-class StreamingServiceInline(admin.TabularInline):
-    model = StreamingService
+from events.models import Event, Stream, Participant
 
 
 class ParticipantAdmin(admin.ModelAdmin):
@@ -14,9 +9,6 @@ class ParticipantAdmin(admin.ModelAdmin):
 
 class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'starts_at', 'ends_at', 'active')
-    inlines = [
-        StreamingServiceInline,
-    ]
 
 
 class StreamAdmin(admin.ModelAdmin):
@@ -44,12 +36,6 @@ class StreamAdmin(admin.ModelAdmin):
     get_date_range.admin_order_field = ('starts_at', 'ends_at')
 
 
-class StreamingServiceAdmin(admin.ModelAdmin):
-    list_display = ('event', 'kind', 'server')
-    form = StreamingServiceForm
-
-
 admin.site.register(Participant, ParticipantAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Stream, StreamAdmin)
-admin.site.register(StreamingService, StreamingServiceAdmin)

@@ -65,25 +65,3 @@ class Stream(models.Model):
     def is_valid_at(self, at):
         return self.event.is_valid_at(
             at) and self.starts_at <= at and at < self.ends_at
-
-
-class StreamingService(models.Model):
-    YOUTUBE = 'YT'
-    TWITCH = 'TW'
-    CUSTOM = 'CS'
-    STREAMING_SERVICES = [
-        (CUSTOM, 'Custom'),
-        (YOUTUBE, 'Youtube'),
-        (TWITCH, 'Twitch'),
-    ]
-
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    kind = models.CharField(max_length=2,
-                            default=YOUTUBE,
-                            choices=STREAMING_SERVICES)
-    server = models.CharField(max_length=200)
-    key = models.CharField(max_length=200)
-
-    def __str__(self):
-        return '{event_name} - {kind}'.format(event_name=self.event.name,
-                                              kind=self.kind)
