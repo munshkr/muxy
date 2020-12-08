@@ -44,7 +44,7 @@ class Stream(models.Model):
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
     stream_key = models.UUIDField(default=uuid.uuid4, editable=False)
-    live_at = models.DateTimeField(blank=True, null=True)
+    live_at = models.DateTimeField(blank=True, null=True, editable=False)
 
     def __str__(self):
         return '{event_name}: {publisher_name} ({starts_at} - {ends_at})'.format(
