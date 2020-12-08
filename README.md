@@ -7,6 +7,27 @@ stream herself to public channels or other streaming services.
 
 ## Install
 
+### Configure Muxy server
+
+Copy service files for gunicorn:
+
+```bash
+sudo cp tools/systemd/muxy_gunicorn.* /etc/systemd/system/
+```
+
+Edit `/etc/systemd/system/muxy_gunicorn.service` to replace path to muxy on
+`ExecStart`, and correctly set `User` and `Group`.
+
+Copy nginx site config:
+
+```bash
+sudo cp tools/nginx/muxy.example.com /etc/nginx/conf.d/sites-available/
+```
+
+Rename file to correct server name and edit file to fix server name.
+
+### Configure nginx-rtmp to set validation
+
 The following is an `nginx-rtmp` sample configuration, that configures an RTMP
 application to use Muxy allow/deny mechanism.
 
