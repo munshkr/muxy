@@ -21,15 +21,6 @@ class RTMPURLField(models.URLField):
                      })
 
 
-class Participant(models.Model):
-    name = models.CharField(max_length=200)
-    email = models.EmailField()
-    url = models.URLField(blank=True)
-
-    def __str__(self):
-        return '{name} <{email}>'.format(name=self.name, email=self.email)
-
-
 class Event(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
@@ -37,7 +28,6 @@ class Event(models.Model):
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
     active = models.BooleanField(default=True)
-    participants = models.ManyToManyField(Participant, through='Stream')
 
     def __str__(self):
         return '{name} ({starts_at} - {ends_at})'.format(
@@ -48,17 +38,18 @@ class Event(models.Model):
 
 
 class Stream(models.Model):
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    publisher_name = models.CharField(max_length=200, blank=True)
+    publisher_email = models.EmailField(blank=True)
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
     stream_key = models.UUIDField(default=uuid.uuid4, editable=False)
     live_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return '{event_name}: {participant_name} ({starts_at} - {ends_at})'.format(
+        return '{event_name}: {publisher_name} ({starts_at} - {ends_at})'.format(
             event_name=self.event.name,
-            participant_name=self.participant.name,
+            publisher_name=self.publisher_name,
             starts_at=self.starts_at,
             ends_at=self.ends_at)
 
