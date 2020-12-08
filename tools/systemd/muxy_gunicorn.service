@@ -1,0 +1,17 @@
+[Unit]
+Description=Muxy gunicorn daemon
+Requires=muxy_gunicorn.socket
+After=network.target
+
+[Service]
+User=sammy
+Group=www-data
+WorkingDirectory=/home/sammy/muxy
+ExecStart=/home/sammy/muxy/.venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/muxy_gunicorn.sock \
+          muxy.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
