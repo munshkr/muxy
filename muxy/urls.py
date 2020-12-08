@@ -27,3 +27,7 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
+
+admin.site.site_header = "Muxy Admin"
+admin.site.site_title = "Muxy Admin"
+admin.site.index_title = "Welcome to Muxy"
