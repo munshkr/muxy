@@ -1,7 +1,12 @@
-from django.urls import path
+from django.urls import path, include
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.routers import DefaultRouter
 
 from events import views
+
+router = DefaultRouter()
+router.register(r'events', views.EventViewSet, basename='event')
+router.register(r'streams', views.StreamViewSet, basename='stream')
 
 urlpatterns = [
     path('rtmp/on-publish/', csrf_exempt(views.on_publish), name='on-publish'),
@@ -9,4 +14,5 @@ urlpatterns = [
          csrf_exempt(views.on_publish_done),
          name='on-publish-done'),
     path('rtmp/on-update/', csrf_exempt(views.on_update), name='on-update'),
+    path('', include(router.urls))
 ]

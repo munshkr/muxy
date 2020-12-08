@@ -6,8 +6,22 @@ from django.http import (HttpResponse, HttpResponseForbidden,
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
+from rest_framework import permissions, viewsets
 
-from events.models import Stream
+from events.models import Event, Stream
+from events.serializers import EventSerializer, StreamSerializer
+
+
+class EventViewSet(viewsets.ModelViewSet):
+    serializer_class = EventSerializer
+    queryset = Event.objects.all().order_by('-starts_at')
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class StreamViewSet(viewsets.ModelViewSet):
+    serializer_class = StreamSerializer
+    queryset = Stream.objects.all().order_by('-starts_at')
+    permission_classes = [permissions.IsAuthenticated]
 
 
 @require_POST
