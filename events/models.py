@@ -2,6 +2,7 @@ import socket
 import uuid
 from urllib.parse import urlparse
 
+from autoslug import AutoSlugField
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -68,6 +69,10 @@ class Stream(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     publisher_name = models.CharField(max_length=200, blank=True)
     publisher_email = models.EmailField(blank=True)
+    slug = AutoSlugField(null=True,
+                         default=None,
+                         populate_from='publisher_name',
+                         unique_with=['publisher_name', 'starts_at'])
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
     stream_key = models.UUIDField(default=uuid.uuid4, editable=False)
@@ -96,5 +101,4 @@ class Stream(models.Model):
     def resolved_rtmp_url(self):
         if self.event.rtmp_url:
             # FIXME: Use a slug for publisher name
-            return self.event.resolved_rtmp_url.format(
-                publisher=self.publisher_name)
+            return self.event.resolved_rtmp_url.format(slug=self.slug)
