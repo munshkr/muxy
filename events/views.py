@@ -34,7 +34,7 @@ def on_publish(request):
     now = timezone.now()
 
     # Check if stream is valid
-    if not stream.is_active_at(now):
+    if not stream.is_active_at(now, allow_preparation=True):
         print("[PUBLISH] Stream is not active at %s" % (now))
         return HttpResponseForbidden("Stream is not active now")
 
