@@ -29,6 +29,7 @@ class Event(models.Model):
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
     active = models.BooleanField(default=True)
+    rtmp_url = RTMPURLField(blank=True, null=True)
 
     def __str__(self):
         return self.name
