@@ -115,14 +115,14 @@ rtmp {
 
         # HTTP callback when a stream starts publishing.
         # Returns 2xx only if publisher is allowed to publish now.
-        on_publish http://muxy.example.com/events/rtmp/on-publish/;
+        on_publish http://muxy.example.com/rtmp/on-publish/;
 
         # Called when a stream stops publishing.  Response is ignored.
-        on_publish_done http://muxy.example.com/events/rtmp/on-publish-done/;
+        on_publish_done http://muxy.example.com/rtmp/on-publish-done/;
 
         # Called with a period of notify_update_timeout,
         # to force disconnect publisher when her allotted time ends.
-        on_update http://muxy.example.com/events/rtmp/on-update/;
+        on_update http://muxy.example.com/rtmp/on-update/;
     }
 }
 ```

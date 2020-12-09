@@ -9,6 +9,6 @@ server {
 
     location / {
         include proxy_params;
-        proxy_pass http://unix:/run/muxy_gunicorn.sock;
+        proxy_pass http://unix:/run/muxy-gunicorn.sock;
     }
 }
