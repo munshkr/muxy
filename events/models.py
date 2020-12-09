@@ -33,8 +33,7 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
-    # FIXME: Rename to is_active_at
-    def is_valid_at(self, at):
+    def is_active_at(self, at):
         return self.active and self.starts_at <= at and at < self.ends_at
 
     def clean(self):
@@ -58,9 +57,8 @@ class Stream(models.Model):
             starts_at=self.starts_at,
             ends_at=self.ends_at)
 
-    # FIXME: Rename to is_active_at
-    def is_valid_at(self, at):
-        return self.event.is_valid_at(
+    def is_active_at(self, at):
+        return self.event.is_active_at(
             at) and self.starts_at <= at and at < self.ends_at
 
     def clean(self):
