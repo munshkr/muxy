@@ -1,5 +1,4 @@
 import json
-from urllib.parse import urlparse
 
 from django.http import (HttpResponse, HttpResponseForbidden,
                          HttpResponseRedirect)
@@ -43,7 +42,12 @@ def on_publish(request):
     stream.live_at = now
     stream.save()
 
-    return HttpResponse("OK")
+    event = stream.event
+    # If event has a custom RTMP URL, redirect to it
+    if event.rtmp_url:
+        return HttpResponseRedirect(stream.resolved_rtmp_url)
+    else:
+        return HttpResponse("OK")
 
 
 @require_POST

@@ -1,10 +1,27 @@
+import socket
 import uuid
+from urllib.parse import urlparse
 
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.forms.fields import URLField as FormURLField
 from django.utils import timezone
+
+
+def resolve_url(url):
+    parsed = urlparse(url)
+    ip = socket.gethostbyname(parsed.hostname)
+    n = ''
+    if parsed.username:
+        n += parsed.username
+        if parsed.password:
+            n += ':{}'.format(parsed.password)
+        n += '@'
+    n += str(ip)
+    if parsed.port:
+        n += ':{}'.format(parsed.port)
+    return parsed._replace(netloc=n).geturl()
 
 
 class RTMPURLFormField(FormURLField):
@@ -41,6 +58,11 @@ class Event(models.Model):
         if self.starts_at and self.ends_at and self.ends_at < self.starts_at:
             raise ValidationError("Event ends before starting")
 
+    @property
+    def resolved_rtmp_url(self):
+        if self.rtmp_url:
+            return resolve_url(self.rtmp_url)
+
 
 class Stream(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
@@ -69,3 +91,10 @@ class Stream(models.Model):
                 ends_at__gt=self.starts_at).exclude(pk=self.pk)
             if other_streams.exists():
                 raise ValidationError("There are other simultaneous streams")
+
+    @property
+    def resolved_rtmp_url(self):
+        if self.event.rtmp_url:
+            # FIXME: Use a slug for publisher name
+            return self.event.resolved_rtmp_url.format(
+                publisher=self.publisher_name)
