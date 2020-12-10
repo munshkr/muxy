@@ -12,6 +12,10 @@ from events.models import Event, Stream
 from events.serializers import EventSerializer, StreamSerializer
 
 
+class RtmpRedirect(HttpResponseRedirect):
+    allowed_schemes = ['rtmp']
+
+
 class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     queryset = Event.objects.all().order_by('-starts_at')
@@ -46,7 +50,7 @@ def on_publish(request):
     event = stream.event
     # If event has a custom RTMP URL, redirect to it
     if event.rtmp_url:
-        return HttpResponseRedirect(stream.resolved_rtmp_url)
+        return RtmpRedirect(stream.resolved_rtmp_url)
     else:
         return HttpResponse("OK")
 
