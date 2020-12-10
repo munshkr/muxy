@@ -27,7 +27,7 @@ def on_publish(request):
     stream_key = request.POST['name']
 
     # Lookup the activity and verify the publisher is allowed to stream.
-    stream = get_object_or_404(Stream, stream_key=stream_key)
+    stream = get_object_or_404(Stream, key=stream_key)
 
     now = timezone.now()
 
@@ -55,7 +55,7 @@ def on_publish_done(request):
     stream_key = request.POST['name']
 
     # Set the stream offline
-    Stream.objects.filter(stream_key=stream_key).update(live_at=None)
+    Stream.objects.filter(key=stream_key).update(live_at=None)
 
     # Response is ignored.
     return HttpResponse("OK")
@@ -64,7 +64,7 @@ def on_publish_done(request):
 @require_POST
 def on_update(request):
     stream_key = request.POST['name']
-    stream = get_object_or_404(Stream, stream_key=stream_key)
+    stream = get_object_or_404(Stream, key=stream_key)
 
     now = timezone.now()
     if not stream.is_active_at(now):

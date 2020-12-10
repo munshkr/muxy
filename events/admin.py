@@ -10,8 +10,7 @@ class EventAdmin(admin.ModelAdmin):
 
 class StreamAdmin(admin.ModelAdmin):
     list_display = ('slug', 'get_event_name', 'starts_at', 'ends_at',
-                    'publisher_name', 'publisher_email', 'live_at',
-                    'stream_key')
+                    'publisher_name', 'publisher_email', 'live_at', 'key')
     list_display_links = ('slug', )
     exclude = ('live_at', )
     form = StreamForm

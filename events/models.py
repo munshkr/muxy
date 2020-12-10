@@ -66,6 +66,10 @@ class Event(models.Model):
             return resolve_url(self.rtmp_url)
 
 
+def get_uuid4():
+    return str(uuid.uuid4())
+
+
 class Stream(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     publisher_name = models.CharField(max_length=200, blank=True)
@@ -76,7 +80,10 @@ class Stream(models.Model):
                          unique_with=['publisher_name', 'starts_at'])
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
-    stream_key = models.UUIDField(default=uuid.uuid4, editable=False)
+    key = models.CharField(max_length=36,
+                           default=get_uuid4,
+                           editable=True,
+                           unique=True)
     live_at = models.DateTimeField(blank=True, null=True, editable=False)
 
     def __str__(self):
