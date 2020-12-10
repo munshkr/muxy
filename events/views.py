@@ -14,13 +14,11 @@ from events.serializers import EventSerializer, StreamSerializer
 class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     queryset = Event.objects.all().order_by('-starts_at')
-    permission_classes = [permissions.IsAuthenticated]
 
 
 class StreamViewSet(viewsets.ModelViewSet):
     serializer_class = StreamSerializer
     queryset = Stream.objects.all().order_by('-starts_at')
-    permission_classes = [permissions.IsAuthenticated]
 
 
 @require_POST

@@ -132,6 +132,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE':
     10,
     'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework_api_key.permissions.HasAPIKey',
     ]
 }
