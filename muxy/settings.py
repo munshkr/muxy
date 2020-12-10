@@ -129,10 +129,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
     'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE':
-    10,
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_api_key.permissions.HasAPIKey',
-    ]
+    'PAGE_SIZE': 10,
 }
