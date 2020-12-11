@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 from rest_framework import permissions, viewsets
 from rest_framework_api_key.permissions import HasAPIKey
+from rest_framework.exceptions import NotFound, ParseError
 
 from events.models import Event, Stream
 from events.serializers import EventSerializer, StreamSerializer
@@ -79,3 +80,28 @@ def on_update(request):
         return HttpResponseForbidden("Stream is not active now")
 
     return HttpResponse("OK")
+
+
+@require_GET
+def streams_check_key(request):
+    stream_key = request.GET.get('key')
+    if not stream_key:
+        raise ParseError("Missing key parameter")
+
+    stream = Stream.objects.filter(key=stream_key).first()
+    if not stream:
+        raise HttpResponse("There is no Stream with the key %s" %
+                           (stream_key), )
+
+    now = timezone.now()
+    starts_at, ends_at = stream.valid_range
+    is_valid = stream.is_active_at(now)
+
+    if is_valid:
+        return HttpResponse(
+            "Stream is valid now (%s). You are allowed to stream from %s to %s"
+            % (now, starts_at, ends_at))
+    else:
+        return HttpResponse(
+            "Stream is not valid now (%s). You are allowed to stream from %s to %s"
+            % (now, starts_at, ends_at))

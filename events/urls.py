@@ -14,5 +14,6 @@ urlpatterns = [
          csrf_exempt(views.on_publish_done),
          name='on-publish-done'),
     path('rtmp/on-update/', csrf_exempt(views.on_update), name='on-update'),
+    path('streams/check/', views.streams_check_key, name='streams-check-key'),
     path('', include(router.urls))
 ]
