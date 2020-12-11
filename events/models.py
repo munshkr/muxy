@@ -93,10 +93,14 @@ class Stream(models.Model):
             starts_at=self.starts_at,
             ends_at=self.ends_at)
 
-    def is_active_at(self, at, allow_preparation=False):
-        starts_at = self.starts_at - timedelta(
-            minutes=5) if allow_preparation else self.starts_at
+    @property
+    def valid_range(self):
+        starts_at = self.starts_at - timedelta(minutes=5)
         ends_at = self.ends_at
+        return (starts_at, ends_at)
+
+    def is_active_at(self, at):
+        starts_at, ends_at = self.valid_range
         return self.event.is_active_at(at) and starts_at <= at and at < ends_at
 
     def clean(self):
