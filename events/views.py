@@ -1,13 +1,15 @@
 import json
+from datetime import timedelta
 
+from django.conf import settings
 from django.http import (HttpResponse, HttpResponseForbidden,
                          HttpResponseRedirect)
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 from rest_framework import permissions, viewsets
-from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework.exceptions import NotFound, ParseError
+from rest_framework_api_key.permissions import HasAPIKey
 
 from events.models import Event, Stream
 from events.serializers import EventSerializer, StreamSerializer
@@ -40,19 +42,26 @@ def on_publish(request):
     now = timezone.now()
 
     # Check if stream is valid
-    if not stream.is_active_at(now):
-        print("[PUBLISH] Stream is not active at %s" % (now))
-        return HttpResponseForbidden("Stream is not active now")
+    if not stream.is_valid_at(now):
+        print("[PUBLISH] Stream is not valid at %s" % (now))
+        return HttpResponseForbidden("Stream is not valid now")
 
-    # Set the stream live
-    stream.live_at = now
-    stream.save()
-
-    event = stream.event
     # If event has a custom RTMP URL, redirect to it
-    if event.rtmp_url:
-        return RtmpRedirect(stream.resolved_rtmp_url)
+    if stream.event.rtmp_url:
+        if stream.is_preparing_at(now):
+            print(
+                "[PUBLISH] Stream is preparing and not active yet. Allow but do not redirect."
+            )
+            return HttpResponse("OK")
+        else:
+            # Set the stream live
+            stream.live_at = now
+            stream.save()
+
+            print("[PUBLISH] Stream is active. Allow and redirect.")
+            return RtmpRedirect(stream.resolved_rtmp_url)
     else:
+        print("[PUBLISH] Stream is active. Allow.")
         return HttpResponse("OK")
 
 
@@ -66,6 +75,7 @@ def on_publish_done(request):
     Stream.objects.filter(key=stream_key).update(live_at=None)
 
     # Response is ignored.
+    print("[PUBLISH-DONE] Stream stopped streaming")
     return HttpResponse("OK")
 
 
@@ -75,9 +85,21 @@ def on_update(request):
     stream = get_object_or_404(Stream, key=stream_key)
 
     now = timezone.now()
-    if not stream.is_active_at(now):
+    last_update = now - timedelta(seconds=settings.NGINX_RTMP_UPDATE_TIMEOUT)
+
+    # nginx-rtmp only redirects when connecting for the first time. If publisher
+    # is on "preparation", they are already streaming, so we need to forcibly
+    # disconnect them, so that when they retry, they will be redirected at the
+    # on_publish callback.
+    if stream.is_preparing_at(last_update) and stream.is_active_at(now):
+        print("[UPDATE] Stream was preparing and is now active. " \
+              "Force disconnection to redirect to stream next time")
+        return HttpResponseForbidden(
+            "Stream was preparing and is now active. Retry")
+
+    if not stream.is_valid_at(now):
         print("[UPDATE] Stream is not valid at %s" % (now))
-        return HttpResponseForbidden("Stream is not active now")
+        return HttpResponseForbidden("Stream is not valid now")
 
     return HttpResponse("OK")
 
@@ -94,14 +116,23 @@ def streams_check_key(request):
                            (stream_key), )
 
     now = timezone.now()
-    starts_at, ends_at = stream.valid_range
-    is_valid = stream.is_active_at(now)
 
-    if is_valid:
+    is_preparing = stream.is_preparing_at(now)
+    is_active = stream.is_active_at(now)
+
+    if is_preparing:
+        begin, end = stream.preparing_range
         return HttpResponse(
-            "Stream is valid now (%s). You are allowed to stream from %s to %s"
-            % (now, starts_at, ends_at))
+            "Stream is preparing (%s). " \
+            "You can start streaming now (from %s to %s), but stream will not be published to end server yet."
+            % (now, begin, end))
+    elif is_active:
+        begin, end = stream.active_range
+        return HttpResponse(
+            "Stream is active now (%s). You can stream now! (from %s to %s)" %
+            (now, begin, end))
     else:
+        begin, end = stream.valid_range
         return HttpResponse(
             "Stream is not valid now (%s). You are allowed to stream from %s to %s"
-            % (now, starts_at, ends_at))
+            % (now, begin, end))

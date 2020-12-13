@@ -131,3 +131,5 @@ REST_FRAMEWORK = {
     'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }
+
+NGINX_RTMP_UPDATE_TIMEOUT = int(os.getenv('NGINX_RTMP_UPDATE_TIMEOUT', '30'))

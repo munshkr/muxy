@@ -107,15 +107,37 @@ class Stream(models.Model):
             ends_at=self.ends_at)
 
     @property
+    def active_range(self):
+        return (self.starts_at, self.ends_at)
+
+    @property
+    def preparing_range(self):
+        begin, _ = self.active_range
+        return (begin - timedelta(minutes=self.event.preparation_time), begin)
+
+    @property
     def valid_range(self):
-        starts_at = self.starts_at - timedelta(
-            minutes=self.event.preparation_time)
-        ends_at = self.ends_at
-        return (starts_at, ends_at)
+        begin, _ = self.preparing_range
+        _, end = self.active_range
+        return (begin, end)
 
     def is_active_at(self, at):
-        starts_at, ends_at = self.valid_range
-        return self.event.is_active_at(at) and starts_at <= at and at < ends_at
+        """Whether stream is active and is allowed to stream to the event server"""
+        begin, end = self.active_range
+        return self.event.is_active_at(at) and begin <= at and at < end
+
+    def is_preparing_at(self, at):
+        """Whether stream is at the preparation phase
+
+        Stream is allowed to stream to Muxy but not to the event server
+
+        """
+        begin, end = self.preparing_range
+        return begin <= at and at < end
+
+    def is_valid_at(self, at):
+        """Whether stream is preparing or active; i.e. is allowed to stream to Muxy"""
+        return self.is_preparing_at(at) or self.is_active_at(at)
 
     def clean(self):
         if self.pk and self.starts_at and self.ends_at:
@@ -125,6 +147,7 @@ class Stream(models.Model):
             if other_streams.exists():
                 raise ValidationError("There are other simultaneous streams")
 
+    # FIXME: Should be a property of Event
     @property
     def resolved_rtmp_url(self):
         if self.event.rtmp_url:
