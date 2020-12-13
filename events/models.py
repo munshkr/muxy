@@ -48,6 +48,7 @@ class Event(models.Model):
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
     active = models.BooleanField(default=True)
+    preparation_time = models.PositiveIntegerField(default=5)
     rtmp_url = RTMPURLField(blank=True, null=True)
 
     def __str__(self):
@@ -60,10 +61,22 @@ class Event(models.Model):
         if self.starts_at and self.ends_at and self.ends_at < self.starts_at:
             raise ValidationError("Event ends before starting")
 
+        if self.duration:
+            duration_in_minutes = self.duration.total_seconds() // 60
+            if self.preparation_time > duration_in_minutes:
+                raise ValidationError(
+                    "Preparation time (%d) is longer than the duration of the event (%d)"
+                    % (self.preparation_time, duration_in_minutes))
+
     @property
     def resolved_rtmp_url(self):
         if self.rtmp_url:
             return resolve_url(self.rtmp_url)
+
+    @property
+    def duration(self):
+        if self.starts_at and self.ends_at:
+            return self.ends_at - self.starts_at
 
 
 def get_uuid4():
@@ -95,7 +108,8 @@ class Stream(models.Model):
 
     @property
     def valid_range(self):
-        starts_at = self.starts_at - timedelta(minutes=5)
+        starts_at = self.starts_at - timedelta(
+            minutes=self.event.preparation_time)
         ends_at = self.ends_at
         return (starts_at, ends_at)
 
