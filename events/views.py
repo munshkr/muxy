@@ -30,7 +30,8 @@ class StreamViewSet(viewsets.ModelViewSet):
     serializer_class = StreamSerializer
     queryset = Stream.objects.all().order_by('-starts_at')
     permission_classes = [permissions.IsAuthenticated | HasAPIKey]
-    filterset_fields = ('slug', 'publisher_name', 'publisher_email', 'key')
+    filterset_fields = ('event__id', 'slug', 'publisher_name',
+                        'publisher_email', 'key')
 
 
 @require_POST

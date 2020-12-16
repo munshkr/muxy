@@ -133,7 +133,9 @@ REST_FRAMEWORK = {
     'PAGE_SIZE':
     10,
     'DEFAULT_FILTER_BACKENDS':
-    ['django_filters.rest_framework.DjangoFilterBackend']
+    ['django_filters.rest_framework.DjangoFilterBackend'],
+    'PAGE_SIZE':
+    100
 }
 
 NGINX_RTMP_UPDATE_TIMEOUT = int(os.getenv('NGINX_RTMP_UPDATE_TIMEOUT', '30'))
