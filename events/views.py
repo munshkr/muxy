@@ -23,7 +23,7 @@ class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     queryset = Event.objects.all().order_by('-starts_at')
     permission_classes = [permissions.IsAuthenticated | HasAPIKey]
-    filterset_fields = ('name')
+    filterset_fields = ('name', )
 
 
 class StreamViewSet(viewsets.ModelViewSet):
