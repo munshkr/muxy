@@ -50,6 +50,7 @@ class Event(models.Model):
     active = models.BooleanField(default=True)
     preparation_time = models.PositiveIntegerField(default=5)
     rtmp_url = RTMPURLField(blank=True, null=True)
+    contact_email = models.EmailField(blank=True, null=True)
 
     def __str__(self):
         return self.name
