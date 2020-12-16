@@ -1,0 +1,14 @@
+Hi $name,
+
+Thank you for signing up on "$event_name".
+
+Here's some general information about your stream:
+
+* Starts at: $starts_at
+* Ends at: $ends_at
+* RTMP server URL: $rtmp_url
+* Stream key: $key
+
+I will notify you again 5 minutes before your stream starts, so you can prepare.
+
+Cheers!
