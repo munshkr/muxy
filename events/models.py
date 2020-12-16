@@ -43,6 +43,10 @@ class RTMPURLField(models.URLField):
 
 class Event(models.Model):
     name = models.CharField(max_length=200)
+    slug = AutoSlugField(null=True,
+                         default=None,
+                         populate_from='name',
+                         unique='name')
     description = models.TextField(blank=True, null=True)
     url = models.URLField(blank=True, null=True)
     starts_at = models.DateTimeField()
