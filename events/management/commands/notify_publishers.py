@@ -61,7 +61,9 @@ class Command(BaseCommand):
                              starts_at=stream.starts_at.strftime('%c %Z'),
                              ends_at=stream.ends_at.strftime('%c %Z'),
                              rtmp_url=stream.event.public_rtmp_url,
-                             key=stream.key)
+                             key=stream.key,
+                             contact_email=stream.event.contact_email,
+                             preparation_time=stream.event.preparation_time)
 
             body = Template(body_tpl).safe_substitute(variables)
             subject = Template(options['subject']).safe_substitute(variables)
