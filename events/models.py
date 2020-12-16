@@ -89,6 +89,7 @@ class Stream(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     publisher_name = models.CharField(max_length=200, blank=True)
     publisher_email = models.EmailField(blank=True)
+    description = models.CharField(max_length=255, blank=True)
     slug = AutoSlugField(null=True,
                          default=None,
                          populate_from='publisher_name',
