@@ -9,9 +9,9 @@ Here's some general information about your stream:
 * RTMP server URL: $rtmp_url
 * Stream key: $key
 
-I will notify you again $preparation_time minutes before your stream starts, so
-you can prepare.
+I will notify you again $preparation_time minutes before your stream starts,
+so you can prepare.
 
-If you have any doubts, feel free to reply to this email.
+If you have any questions, feel free to reply to this email.
 
 Cheers!
