@@ -5,3 +5,4 @@ python-dotenv==0.15.0
 djangorestframework-api-key==2.0.0
 django-autoslug==1.9.8
 django-filter==2.4.0
+django-cron==0.5.1
