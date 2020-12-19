@@ -95,10 +95,6 @@ class Stream(models.Model):
     publisher_name = models.CharField(max_length=200, blank=True)
     publisher_email = models.EmailField(blank=True)
     description = models.CharField(max_length=255, blank=True)
-    slug = AutoSlugField(null=True,
-                         default=None,
-                         populate_from='publisher_name',
-                         unique_with=['publisher_name', 'starts_at'])
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
     key = models.CharField(max_length=36,
@@ -159,9 +155,7 @@ class Stream(models.Model):
     def resolved_rtmp_url(self):
         if self.event.rtmp_url:
             tpl = Template(self.event.resolved_rtmp_url)
-            return tpl.safe_substitute(id=self.id,
-                                       slug=self.slug,
-                                       key=self.key)
+            return tpl.safe_substitute(id=self.id, key=self.key)
 
 
 class StreamNotification(models.Model):

@@ -5,18 +5,18 @@ from events.models import Event, Stream, StreamNotification
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('name', 'url', 'starts_at', 'ends_at', 'active')
-    ordering = ('-starts_at',)
+    list_display = ('id', 'slug', 'name', 'url', 'starts_at', 'ends_at',
+                    'active')
+    ordering = ('-starts_at', )
 
 
 class StreamAdmin(admin.ModelAdmin):
-    list_display = ('slug', 'get_event_name', 'starts_at', 'ends_at',
+    list_display = ('id', 'get_event_name', 'starts_at', 'ends_at',
                     'publisher_name', 'publisher_email', 'live_at', 'key')
-    list_display_links = ('slug', )
     exclude = ('live_at', )
     form = StreamForm
-    ordering = ('starts_at',)
-    list_filter = ('event',)
+    ordering = ('starts_at', )
+    list_filter = ('event', )
 
     def get_event_name(self, obj):
         return obj.event.name
