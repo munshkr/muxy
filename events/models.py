@@ -1,7 +1,7 @@
 import socket
 import uuid
-from urllib.parse import urlparse
 from datetime import timedelta
+from urllib.parse import urlparse
 
 from autoslug import AutoSlugField
 from django.core import validators
@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.forms.fields import URLField as FormURLField
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 def resolve_url(url):
@@ -160,3 +161,13 @@ class Stream(models.Model):
         if self.event.rtmp_url:
             # FIXME: Use a slug for publisher name
             return self.event.resolved_rtmp_url.format(slug=self.slug)
+
+
+class StreamNotification(models.Model):
+    class Kinds(models.TextChoices):
+        CREATED = 'CR', _('Created')
+        PREPARING = 'PR', _('Preparing')
+
+    stream = models.ForeignKey(Stream, on_delete=models.CASCADE)
+    kind = models.CharField(max_length=2, choices=Kinds.choices)
+    sent_at = models.DateTimeField(blank=True, null=True)
