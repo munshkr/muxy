@@ -95,6 +95,8 @@ class Stream(models.Model):
     publisher_name = models.CharField(max_length=200, blank=True)
     publisher_email = models.EmailField(blank=True)
     description = models.CharField(max_length=255, blank=True)
+    location = models.CharField(max_length=120, blank=True)
+    timezone = models.CharField(max_length=80, blank=True)
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
     key = models.CharField(max_length=36,
