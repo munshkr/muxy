@@ -1,6 +1,7 @@
 import socket
 import uuid
 from datetime import timedelta
+from string import Template
 from urllib.parse import urlparse
 
 from autoslug import AutoSlugField
@@ -8,7 +9,6 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.forms.fields import URLField as FormURLField
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
@@ -155,12 +155,13 @@ class Stream(models.Model):
             if other_streams.exists():
                 raise ValidationError("There are other simultaneous streams")
 
-    # FIXME: Should be a property of Event
     @property
     def resolved_rtmp_url(self):
         if self.event.rtmp_url:
-            # FIXME: Use a slug for publisher name
-            return self.event.resolved_rtmp_url.format(slug=self.slug)
+            tpl = Template(self.event.resolved_rtmp_url)
+            return tpl.safe_substitute(id=self.id,
+                                       slug=self.slug,
+                                       key=self.key)
 
 
 class StreamNotification(models.Model):
