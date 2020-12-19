@@ -11,8 +11,8 @@ class EventAdmin(admin.ModelAdmin):
 
 
 class StreamAdmin(admin.ModelAdmin):
-    list_display = ('id', 'get_event_name', 'starts_at', 'ends_at',
-                    'publisher_name', 'publisher_email', 'live_at', 'key')
+    list_display = ('id', 'get_event_name', 'publisher_name', 'starts_at',
+                    'ends_at', 'live_at')
     exclude = ('live_at', )
     form = StreamForm
     ordering = ('starts_at', )
