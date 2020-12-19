@@ -29,16 +29,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         event_id = options['event']
+        event = Event.objects.filter(pk=event_id).first()
+        if not event:
+            raise CommandError('Event id %d does not exist.' % event_id)
 
-        if 'only' in options and options['only']:
-            ids = [int(id_s) for id_s in options['only']]
-            streams = Stream.objects.filter(event=event_id, pk=ids).all()
+        if 'streams' in options and options['streams']:
+            streams = Stream.objects.filter(event=event, pk__in=options['streams']).all()
             if not streams.exists():
                 raise CommandError('Streams with ids %s do not exist.' % ids)
         else:
-            event = Event.objects.filter(pk=event_id).first()
-            if not event:
-                raise CommandError('Event id %d does not exist.' % event_id)
             streams = Stream.objects.filter(event=event).all()
             if not streams.exists():
                 raise CommandError('Event id %d has no streams.' % event_id)
