@@ -29,6 +29,10 @@ class StreamAdmin(admin.ModelAdmin):
     get_date_range.admin_order_field = ('starts_at', 'ends_at')
 
 
+class StreamNotificationAdmin(admin.ModelAdmin):
+    list_display = ('stream', 'kind', 'sent_at')
+
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Stream, StreamAdmin)
-admin.site.register(StreamNotification)
+admin.site.register(StreamNotification, StreamNotificationAdmin)
