@@ -29,7 +29,6 @@ class NotifyStreamPreparingJob(CronJobBase):
             & Q(starts_at__gt=now)).all()
 
         for stream in streams_in_preparing:
-            logging.info("Stream: %s", stream)
             preparing_notif = stream.streamnotification_set.filter(
                 Q(kind=StreamNotification.Kinds.PREPARING)).first()
 
