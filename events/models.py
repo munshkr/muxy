@@ -171,3 +171,6 @@ class StreamNotification(models.Model):
     stream = models.ForeignKey(Stream, on_delete=models.CASCADE)
     kind = models.CharField(max_length=2, choices=Kinds.choices)
     sent_at = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return f'[{self.kind}] {self.stream}'

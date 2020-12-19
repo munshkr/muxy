@@ -1,0 +1,16 @@
+Hi,
+
+Your stream on "$event_name" starts in about $starts_in minutes!
+
+Just in case, here's the info again:
+
+* Starts at: $starts_at (UTC)
+* Ends at: $ends_at (UTC)
+* RTMP server: $rtmp_url
+* Stream key: $key
+
+We recommend that you start streaming $preparation_time minutes before the start
+time, if you can, to ensure a smoothly transition.  Your stream will be
+published to the event servers at the right time.
+
+Have fun :-)

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from events.forms import StreamForm
-from events.models import Event, Stream
+from events.models import Event, Stream, StreamNotification
 
 
 class EventAdmin(admin.ModelAdmin):
@@ -31,3 +31,4 @@ class StreamAdmin(admin.ModelAdmin):
 
 admin.site.register(Event, EventAdmin)
 admin.site.register(Stream, StreamAdmin)
+admin.site.register(StreamNotification)
