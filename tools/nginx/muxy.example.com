@@ -6,7 +6,9 @@ server {
     location /static/ {
         root /home/sammy/muxy/static;
     }
-
+    location /recordings/ {
+        root /home/sammy/muxy/recordings;
+    }
     location / {
         include proxy_params;
         proxy_pass http://unix:/run/muxy-gunicorn.sock;

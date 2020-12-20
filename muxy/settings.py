@@ -168,3 +168,7 @@ CRON_CLASSES = [
     "events.cron.NotifyStreamPreparingJob",
 ]
 DJANGO_CRON_DELETE_LOGS_OLDER_THAN = 2
+
+RECORDINGS_ROOT = os.getenv('RECORDINGS_ROOT')
+RECORDINGS_URL = os.getenv('RECORDINGS_URL', '/recordings/')
+RECORDINGS_GLOB_PATTERN = os.getenv('RECORDINGS_GLOB_PATTERN', '$key-*.mp4')

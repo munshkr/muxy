@@ -27,9 +27,19 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class StreamSerializer(serializers.HyperlinkedModelSerializer):
+    recordings = serializers.SerializerMethodField()
+
     class Meta:
         model = Stream
-        fields = '__all__'
+        fields = ("url", "publisher_name", "publisher_email", "description",
+                  "location", "timezone", "starts_at", "ends_at", "key",
+                  "live_at", "event", "recordings")
+
+    def get_recordings(self, stream):
+        request = self.context.get('request')
+        return [
+            request.build_absolute_uri(path) for path in stream.recording_paths
+        ]
 
     def validate(self, attrs):
         starts_at = attrs.get('starts_at')

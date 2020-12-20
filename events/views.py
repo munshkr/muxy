@@ -1,4 +1,3 @@
-import json
 from datetime import timedelta
 
 from django.conf import settings
@@ -8,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 from rest_framework import permissions, viewsets
-from rest_framework.exceptions import NotFound, ParseError
+from rest_framework.exceptions import ParseError
 from rest_framework_api_key.permissions import HasAPIKey
 
 from events.models import Event, Stream

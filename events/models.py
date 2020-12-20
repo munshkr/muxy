@@ -1,8 +1,11 @@
+import os
 import socket
 import uuid
 from datetime import timedelta
+from glob import glob
 from string import Template
 from urllib.parse import urlparse
+from django.conf import settings
 
 from autoslug import AutoSlugField
 from django.core import validators
@@ -111,6 +114,18 @@ class Stream(models.Model):
             publisher_name=self.publisher_name,
             starts_at=self.starts_at,
             ends_at=self.ends_at)
+
+    @property
+    def recording_paths(self):
+        if settings.RECORDINGS_ROOT:
+            pattern = Template(
+                settings.RECORDINGS_GLOB_PATTERN).safe_substitute(key=self.key)
+            files = glob(os.path.join(settings.RECORDINGS_ROOT, pattern))
+            return [
+                settings.RECORDINGS_URL + os.path.basename(f) for f in files
+            ]
+        else:
+            return []
 
     @property
     def active_range(self):
