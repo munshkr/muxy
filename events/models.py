@@ -1,6 +1,7 @@
 import os
 import socket
 import uuid
+from urllib.parse import urljoin
 from datetime import timedelta
 from glob import glob
 from string import Template
@@ -119,11 +120,13 @@ class Stream(models.Model):
     def recording_paths(self):
         if settings.RECORDINGS_ROOT:
             pattern = Template(
-                settings.RECORDINGS_GLOB_PATTERN).safe_substitute(key=self.key)
-            files = glob(os.path.join(settings.RECORDINGS_ROOT, pattern))
-            return [
-                settings.RECORDINGS_URL + os.path.basename(f) for f in files
+                settings.RECORDINGS_GLOB_PATTERN).safe_substitute(
+                    event_slug=self.event.slug, key=self.key)
+            abs_paths = glob(os.path.join(settings.RECORDINGS_ROOT, pattern))
+            paths = [
+                p.split(settings.RECORDINGS_ROOT)[1][1:] for p in abs_paths
             ]
+            return [urljoin(settings.RECORDINGS_URL, p) for p in paths]
         else:
             return []
 
