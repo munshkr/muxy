@@ -15,7 +15,7 @@ class StreamAdmin(admin.ModelAdmin):
                     'ends_at', 'live_at')
     exclude = ('live_at', )
     form = StreamForm
-    ordering = ('starts_at', )
+    ordering = ('-starts_at', )
     list_filter = ('event', )
 
     def get_event_name(self, obj):
