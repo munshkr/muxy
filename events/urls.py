@@ -7,6 +7,9 @@ from events import views
 router = DefaultRouter()
 router.register(r'events', views.EventViewSet, basename='event')
 router.register(r'streams', views.StreamViewSet, basename='stream')
+router.register(r'slot-intervals',
+                views.SlotIntervalViewSet,
+                basename='slotinterval')
 
 urlpatterns = [
     path('rtmp/on-publish/', csrf_exempt(views.on_publish), name='on-publish'),

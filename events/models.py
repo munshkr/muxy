@@ -205,13 +205,21 @@ class SlotInterval(models.Model):
         if not self.starts_at and not self.ends_at:
             return
 
-        if self.starts_at and self.ends_at and self.ends_at < self.starts_at:
+        if self.ends_at < self.starts_at:
             raise ValidationError(f"Slot interval ends before starting")
         if self.starts_at < self.event.starts_at:
             raise ValidationError(
                 f"Slot interval starts before the event starts")
         if self.ends_at > self.event.ends_at:
             raise ValidationError(f"Slot interval ends after the event ends")
+
+        if self.pk and self.starts_at and self.ends_at:
+            other_intervals = SlotInterval.objects.filter(
+                starts_at__lt=self.ends_at,
+                ends_at__gt=self.starts_at).exclude(pk=self.pk)
+            if other_intervals.exists():
+                raise ValidationError(
+                    "There are other overlapping slot intervals")
 
     @property
     def duration(self):

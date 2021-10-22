@@ -10,8 +10,8 @@ from rest_framework import permissions, viewsets
 from rest_framework.exceptions import ParseError
 from rest_framework_api_key.permissions import HasAPIKey
 
-from events.models import Event, Stream
-from events.serializers import EventSerializer, StreamSerializer
+from events.models import Event, Stream, SlotInterval
+from events.serializers import EventSerializer, SlotIntervalSerializer, StreamSerializer
 
 
 class RtmpRedirect(HttpResponseRedirect):
@@ -31,6 +31,13 @@ class StreamViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated | HasAPIKey]
     filterset_fields = ('event__id', 'event__slug', 'publisher_name', 'publisher_email',
                         'key')
+
+
+class SlotIntervalViewSet(viewsets.ModelViewSet):
+    serializer_class = SlotIntervalSerializer
+    queryset = SlotInterval.objects.all().order_by('-starts_at')
+    permission_classes = [permissions.IsAuthenticated | HasAPIKey]
+    filterset_fields = ('event__id', )
 
 
 @require_POST
