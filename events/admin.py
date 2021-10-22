@@ -1,13 +1,32 @@
 from django.contrib import admin
 
 from events.forms import StreamForm
-from events.models import Event, Stream, StreamNotification
+from events.models import SlotInterval, Event, Stream, StreamNotification
+from django.forms.models import BaseInlineFormSet
+
+
+class SlotIntervalInlineFormSet(BaseInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        kwargs['initial'] = [{
+            'starts_at': kwargs['instance'].starts_at,
+            'ends_at': kwargs['instance'].ends_at
+        }]
+        super(SlotIntervalInlineFormSet, self).__init__(*args, **kwargs)
+
+
+class SlotIntervalInline(admin.TabularInline):
+    model = SlotInterval
+    extra = 1
+    formset = SlotIntervalInlineFormSet
 
 
 class EventAdmin(admin.ModelAdmin):
     list_display = ('id', 'slug', 'name', 'url', 'starts_at', 'ends_at',
                     'active')
     ordering = ('-starts_at', )
+    inlines = [
+        SlotIntervalInline,
+    ]
 
 
 class StreamAdmin(admin.ModelAdmin):

@@ -190,3 +190,30 @@ class StreamNotification(models.Model):
 
     def __str__(self):
         return f'[{self.kind}] {self.stream}'
+
+
+class SlotInterval(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    starts_at = models.DateTimeField()
+    ends_at = models.DateTimeField()
+    slot_duration = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f'{self.starts_at} - {self.ends_at}'
+
+    def clean(self):
+        if not self.starts_at and not self.ends_at:
+            return
+
+        if self.starts_at and self.ends_at and self.ends_at < self.starts_at:
+            raise ValidationError(f"Slot interval ends before starting")
+        if self.starts_at < self.event.starts_at:
+            raise ValidationError(
+                f"Slot interval starts before the event starts")
+        if self.ends_at > self.event.ends_at:
+            raise ValidationError(f"Slot interval ends after the event ends")
+
+    @property
+    def duration(self):
+        if self.starts_at and self.ends_at:
+            return self.ends_at - self.starts_at
