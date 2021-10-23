@@ -122,7 +122,8 @@ class Stream(models.Model):
             pattern = Template(
                 settings.RECORDINGS_GLOB_PATTERN).safe_substitute(
                     event_slug=self.event.slug, key=self.key)
-            abs_paths = glob(os.path.join(settings.RECORDINGS_ROOT, pattern))
+            abs_paths = sorted(
+                glob(os.path.join(settings.RECORDINGS_ROOT, pattern)))
             paths = [
                 p.split(settings.RECORDINGS_ROOT)[1][1:] for p in abs_paths
             ]
