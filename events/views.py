@@ -27,7 +27,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
 class StreamViewSet(viewsets.ModelViewSet):
     serializer_class = StreamSerializer
-    queryset = Stream.objects.all().order_by('-starts_at')
+    queryset = Stream.objects.all().order_by('-event__starts_at', 'starts_at')
     permission_classes = [permissions.IsAuthenticated | HasAPIKey]
     filterset_fields = ('event__id', 'publisher_name', 'publisher_email',
                         'key')
