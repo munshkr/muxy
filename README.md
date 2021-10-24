@@ -16,6 +16,20 @@ virtualenv -p python3.7 .venv
 source .venv/bin/activate
 ```
 
+Install the dependencies:
+
+```
+pip3 install -r requirements.txt
+```
+
+Copy `env.sample` to `.env` and update if necessary. You should set at least:
+
+- `SECRET_KEY`: Use a unique random string.
+- `ALLOWED_HOSTS`: Add your hostname.
+- `LANGUAGE_CODE`: Set default language code.
+- `TIME_ZONE`: Set server time zone if different than UTC.
+- `DB_PATH`: Set to a valid sqlite3 database file
+
 Now, run migrations to create and prepare database:
 
 ```
@@ -33,13 +47,6 @@ Finally, collect static files for admin panel:
 ```
 ./manage.py collectstatic
 ```
-
-Copy `env.sample` to `.env` and update if necessary. You should set at least:
-
-- `SECRET_KEY`: Use a unique random string.
-- `ALLOWED_HOSTS`: Add your hostname.
-- `LANGUAGE_CODE`: Set default language code.
-- `TIME_ZONE`: Set server time zone if different than UTC.
 
 To run server locally, use:
 
