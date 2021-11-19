@@ -15,14 +15,20 @@ Including another URLconf
 """
 
 from django.conf import settings
-from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('events.urls')),
+    path("admin/", admin.site.urls),
+    path(
+        "schema/",
+        SpectacularAPIView.as_view(api_version=settings.API_VERSION),
+        name="schema",
+    ),
+    path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
+    path("", include("events.urls")),
 ]
 
 if settings.DEBUG:
