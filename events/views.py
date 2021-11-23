@@ -22,14 +22,14 @@ class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     queryset = Event.objects.all().order_by('-starts_at')
     permission_classes = [permissions.IsAuthenticated | HasAPIKey]
-    filterset_fields = ('name', )
+    filterset_fields = ('slug', 'name', )
 
 
 class StreamViewSet(viewsets.ModelViewSet):
     serializer_class = StreamSerializer
     queryset = Stream.objects.all().order_by('-event__starts_at', 'starts_at')
     permission_classes = [permissions.IsAuthenticated | HasAPIKey]
-    filterset_fields = ('event__id', 'publisher_name', 'publisher_email',
+    filterset_fields = ('event__id', 'event__slug', 'publisher_name', 'publisher_email',
                         'key')
 
 
