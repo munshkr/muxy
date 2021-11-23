@@ -46,9 +46,11 @@ INSTALLED_APPS = [
     "django_filters",
     "django_cron",
     "drf_spectacular",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -175,3 +177,5 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Muxy API",
     "VERSION": f"v{API_VERSION}",
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
