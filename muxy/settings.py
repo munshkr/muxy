@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", False)
+DEBUG = int(os.getenv("DEBUG") or "0") > 0
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
@@ -178,4 +178,8 @@ SPECTACULAR_SETTINGS = {
     "VERSION": f"v{API_VERSION}",
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    o for o in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if o
+]
+# If there is no specific origin to allow, accept all origins
+CORS_ALLOW_ALL_ORIGINS = len(CORS_ALLOWED_ORIGINS) > 0
