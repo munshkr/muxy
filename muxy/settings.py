@@ -182,4 +182,4 @@ CORS_ALLOWED_ORIGINS = [
     o for o in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if o
 ]
 # If there is no specific origin to allow, accept all origins
-CORS_ALLOW_ALL_ORIGINS = len(CORS_ALLOWED_ORIGINS) > 0
+CORS_ALLOW_ALL_ORIGINS = len(CORS_ALLOWED_ORIGINS) == 0
