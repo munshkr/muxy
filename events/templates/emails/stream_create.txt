@@ -1,6 +1,6 @@
 Hi $name,
 
-Thank you for signing up on "$event_name".
+Thank you for signing up on "$event_name". Your slot is called "$name".
 
 Here's some general information about your stream:
 
