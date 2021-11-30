@@ -97,6 +97,9 @@ class EventStreamURL(models.Model):
     url = models.URLField(unique=True)
     name = models.CharField(max_length=255, blank=True)
 
+    def __str__(self):
+        return self.url
+
 
 def get_uuid4():
     return str(uuid.uuid4())
