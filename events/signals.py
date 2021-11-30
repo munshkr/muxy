@@ -2,7 +2,7 @@ import os
 from string import Template
 
 from django.apps import apps
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
@@ -36,15 +36,11 @@ def send_stream_create_email(sender, instance, created, **kwargs):
 
         body = Template(body_tpl).safe_substitute(variables)
         subject = Template(subject).safe_substitute(variables)
-
         to = [stream.publisher_email]
-        send_mail(
-            subject,
-            body,
-            stream.event.contact_email,
-            to,
-            fail_silently=False,
-        )
+        headers = {"Reply-To": stream.event.contact_email}
+        msg = EmailMessage(subject, body, None, to, headers=headers)
+
+        msg.send(fail_silently=False)
 
         StreamNotification.objects.create(
             stream=stream, kind=StreamNotification.Kinds.CREATED, sent_at=now
