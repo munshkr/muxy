@@ -1,39 +1,51 @@
 from django.contrib import admin
 
 from events.forms import StreamForm
-from events.models import Event, Stream, StreamNotification
+from events.models import Event, EventStreamURL, Stream, StreamNotification
+
+
+class EventStreamURLInline(admin.TabularInline):
+    model = EventStreamURL
+    extra = 1
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('id', 'slug', 'name', 'url', 'starts_at', 'ends_at',
-                    'active')
-    ordering = ('-starts_at', )
+    list_display = ("id", "slug", "name", "url", "starts_at", "ends_at", "active")
+    ordering = ("-starts_at",)
+    inlines = [EventStreamURLInline]
 
 
 class StreamAdmin(admin.ModelAdmin):
-    list_display = ('id', 'get_event_name', 'publisher_name', 'starts_at',
-                    'ends_at', 'live_at')
-    exclude = ('live_at', )
+    list_display = (
+        "id",
+        "get_event_name",
+        "publisher_name",
+        "starts_at",
+        "ends_at",
+        "live_at",
+    )
+    exclude = ("live_at",)
     form = StreamForm
-    ordering = ('-starts_at', )
-    list_filter = ('event', )
+    ordering = ("-starts_at",)
+    list_filter = ("event",)
 
     def get_event_name(self, obj):
         return obj.event.name
 
-    get_event_name.short_description = 'Event'
-    get_event_name.admin_order_field = 'event__name'
+    get_event_name.short_description = "Event"
+    get_event_name.admin_order_field = "event__name"
 
     def get_date_range(self, obj):
-        return '{starts_at} - {obj.ends_at}'.format(starts_at=obj.starts_at,
-                                                    ends_at=obj.ends_at)
+        return "{starts_at} - {obj.ends_at}".format(
+            starts_at=obj.starts_at, ends_at=obj.ends_at
+        )
 
-    get_date_range.short_description = 'Date range'
-    get_date_range.admin_order_field = ('starts_at', 'ends_at')
+    get_date_range.short_description = "Date range"
+    get_date_range.admin_order_field = ("starts_at", "ends_at")
 
 
 class StreamNotificationAdmin(admin.ModelAdmin):
-    list_display = ('stream', 'kind', 'sent_at')
+    list_display = ("stream", "kind", "sent_at")
 
 
 admin.site.register(Event, EventAdmin)
