@@ -37,6 +37,7 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
 
 class StreamSerializer(serializers.HyperlinkedModelSerializer):
     recordings = serializers.SerializerMethodField()
+    key = serializers.CharField(required=False)
 
     class Meta:
         model = Stream
