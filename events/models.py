@@ -19,39 +19,38 @@ from django.utils.translation import gettext_lazy as _
 def resolve_url(url):
     parsed = urlparse(url)
     ip = socket.gethostbyname(parsed.hostname)
-    n = ''
+    n = ""
     if parsed.username:
         n += parsed.username
         if parsed.password:
-            n += ':{}'.format(parsed.password)
-        n += '@'
+            n += ":{}".format(parsed.password)
+        n += "@"
     n += str(ip)
     if parsed.port:
-        n += ':{}'.format(parsed.port)
+        n += ":{}".format(parsed.port)
     return parsed._replace(netloc=n).geturl()
 
 
 class RTMPURLFormField(FormURLField):
-    default_validators = [validators.URLValidator(schemes=['rtmp'])]
+    default_validators = [validators.URLValidator(schemes=["rtmp"])]
 
 
 class RTMPURLField(models.URLField):
-    '''URL field that accepts URLs that start with rtmp:// only.'''
-    default_validators = [validators.URLValidator(schemes=['rtmp'])]
+    """URL field that accepts URLs that start with rtmp:// only."""
+
+    default_validators = [validators.URLValidator(schemes=["rtmp"])]
 
     def formfield(self, **kwargs):
-        return super(RTMPURLField,
-                     self).formfield(**{
-                         'form_class': RTMPURLFormField,
-                     })
+        return super(RTMPURLField, self).formfield(
+            **{
+                "form_class": RTMPURLFormField,
+            }
+        )
 
 
 class Event(models.Model):
     name = models.CharField(max_length=200)
-    slug = AutoSlugField(null=True,
-                         default=None,
-                         populate_from='name',
-                         unique='name')
+    slug = AutoSlugField(null=True, default=None, populate_from="name", unique="name")
     description = models.TextField(blank=True, null=True)
     url = models.URLField(blank=True, null=True)
     starts_at = models.DateTimeField()
@@ -77,7 +76,8 @@ class Event(models.Model):
             if self.preparation_time > duration_in_minutes:
                 raise ValidationError(
                     "Preparation time (%d) is longer than the duration of the event (%d)"
-                    % (self.preparation_time, duration_in_minutes))
+                    % (self.preparation_time, duration_in_minutes)
+                )
 
     @property
     def resolved_rtmp_url(self):
@@ -88,6 +88,14 @@ class Event(models.Model):
     def duration(self):
         if self.starts_at and self.ends_at:
             return self.ends_at - self.starts_at
+
+
+class EventStreamURL(models.Model):
+    event = models.ForeignKey(
+        Event, on_delete=models.CASCADE, related_name="stream_urls"
+    )
+    url = models.URLField(unique=True)
+    name = models.CharField(max_length=255, blank=True)
 
 
 def get_uuid4():
@@ -103,30 +111,25 @@ class Stream(models.Model):
     timezone = models.CharField(max_length=80, blank=True)
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
-    key = models.CharField(max_length=36,
-                           default=get_uuid4,
-                           editable=True,
-                           unique=True)
+    key = models.CharField(max_length=36, default=get_uuid4, editable=True, unique=True)
     live_at = models.DateTimeField(blank=True, null=True, editable=False)
 
     def __str__(self):
-        return '{event_name}: {publisher_name} ({starts_at} - {ends_at})'.format(
+        return "{event_name}: {publisher_name} ({starts_at} - {ends_at})".format(
             event_name=self.event.name,
             publisher_name=self.publisher_name,
             starts_at=self.starts_at,
-            ends_at=self.ends_at)
+            ends_at=self.ends_at,
+        )
 
     @property
     def recording_paths(self):
         if settings.RECORDINGS_ROOT:
-            pattern = Template(
-                settings.RECORDINGS_GLOB_PATTERN).safe_substitute(
-                    event_slug=self.event.slug, key=self.key)
-            abs_paths = sorted(
-                glob(os.path.join(settings.RECORDINGS_ROOT, pattern)))
-            paths = [
-                p.split(settings.RECORDINGS_ROOT)[1][1:] for p in abs_paths
-            ]
+            pattern = Template(settings.RECORDINGS_GLOB_PATTERN).safe_substitute(
+                event_slug=self.event.slug, key=self.key
+            )
+            abs_paths = sorted(glob(os.path.join(settings.RECORDINGS_ROOT, pattern)))
+            paths = [p.split(settings.RECORDINGS_ROOT)[1][1:] for p in abs_paths]
             return [urljoin(settings.RECORDINGS_URL, p) for p in paths]
         else:
             return []
@@ -167,8 +170,8 @@ class Stream(models.Model):
     def clean(self):
         if self.pk and self.starts_at and self.ends_at:
             other_streams = Stream.objects.filter(
-                starts_at__lt=self.ends_at,
-                ends_at__gt=self.starts_at).exclude(pk=self.pk)
+                starts_at__lt=self.ends_at, ends_at__gt=self.starts_at
+            ).exclude(pk=self.pk)
             if other_streams.exists():
                 raise ValidationError("There are other simultaneous streams")
 
@@ -181,12 +184,12 @@ class Stream(models.Model):
 
 class StreamNotification(models.Model):
     class Kinds(models.TextChoices):
-        CREATED = 'CR', _('Created')
-        PREPARING = 'PR', _('Preparing')
+        CREATED = "CR", _("Created")
+        PREPARING = "PR", _("Preparing")
 
     stream = models.ForeignKey(Stream, on_delete=models.CASCADE)
     kind = models.CharField(max_length=2, choices=Kinds.choices)
     sent_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return f'[{self.kind}] {self.stream}'
+        return f"[{self.kind}] {self.stream}"
