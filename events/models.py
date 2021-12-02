@@ -176,7 +176,7 @@ class Stream(models.Model):
                 starts_at__lt=self.ends_at, ends_at__gt=self.starts_at
             ).exclude(pk=self.pk)
             if other_streams.exists():
-                raise ValidationError("There are other simultaneous streams")
+                raise ValidationError("overlaps with other streams")
 
     @property
     def resolved_rtmp_url(self):

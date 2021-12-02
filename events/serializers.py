@@ -71,6 +71,8 @@ class StreamSerializer(serializers.HyperlinkedModelSerializer):
                 starts_at__lt=attrs["ends_at"],
                 ends_at__gt=attrs["starts_at"],
             )
+            if self.instance:
+                other_streams = other_streams.exclude(pk=self.instance.pk)
             if key:
                 other_streams = other_streams.exclude(key=attrs["key"])
             if other_streams.exists():
