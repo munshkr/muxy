@@ -10,6 +10,8 @@ class EventStreamURLSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class EventSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="event-detail")
+    event_url = serializers.CharField(source="url")
     stream_urls = EventStreamURLSerializer(many=True, read_only=True)
 
     class Meta:
@@ -41,20 +43,7 @@ class StreamSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Stream
-        fields = (
-            "url",
-            "publisher_name",
-            "publisher_email",
-            "description",
-            "location",
-            "timezone",
-            "starts_at",
-            "ends_at",
-            "key",
-            "live_at",
-            "event",
-            "recordings",
-        )
+        fields = "__all__"
 
     def get_recordings(self, stream):
         request = self.context.get("request")
