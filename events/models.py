@@ -1,19 +1,20 @@
 import os
 import socket
 import uuid
-from urllib.parse import urljoin
 from datetime import timedelta
 from glob import glob
 from string import Template
-from urllib.parse import urlparse
-from django.conf import settings
+from urllib.parse import urljoin, urlparse
 
 from autoslug import AutoSlugField
+from django.conf import settings
+from django.contrib.auth.models import User
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.forms.fields import URLField as FormURLField
 from django.utils.translation import gettext_lazy as _
+from rest_framework_api_key.models import AbstractAPIKey
 
 
 def resolve_url(url):
@@ -46,6 +47,14 @@ class RTMPURLField(models.URLField):
                 "form_class": RTMPURLFormField,
             }
         )
+
+
+class UserAPIKey(AbstractAPIKey):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta(AbstractAPIKey.Meta):
+        verbose_name = "User API key"
+        verbose_name_plural = "User API keys"
 
 
 class Event(models.Model):
