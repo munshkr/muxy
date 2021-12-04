@@ -177,6 +177,16 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Muxy API",
     "DESCRIPTION": "Muxy API",
     "VERSION": f"v{API_VERSION}",
+    "APPEND_COMPONENTS": {
+        "securitySchemes": {
+            "ApiKeyAuth": {"type": "apiKey", "in": "header", "name": "Authorization"}
+        }
+    },
+    "SECURITY": [
+        {
+            "ApiKeyAuth": [],
+        }
+    ],
 }
 
 CORS_ALLOWED_ORIGINS = [
