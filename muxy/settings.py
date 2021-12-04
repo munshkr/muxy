@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 
+from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -189,10 +190,14 @@ SPECTACULAR_SETTINGS = {
     ],
 }
 
+STREAM_KEY_HEADER = "X-Stream-Key"
+
 CORS_ALLOWED_ORIGINS = [
     o for o in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if o
 ]
 # If there is no specific origin to allow, accept all origins
 CORS_ALLOW_ALL_ORIGINS = len(CORS_ALLOWED_ORIGINS) == 0
 
-STREAM_KEY_HEADER = "X-Stream-Key"
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    STREAM_KEY_HEADER,
+]
