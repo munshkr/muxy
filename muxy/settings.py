@@ -194,3 +194,5 @@ CORS_ALLOWED_ORIGINS = [
 ]
 # If there is no specific origin to allow, accept all origins
 CORS_ALLOW_ALL_ORIGINS = len(CORS_ALLOWED_ORIGINS) == 0
+
+STREAM_KEY_HEADER = "X-Stream-Key"

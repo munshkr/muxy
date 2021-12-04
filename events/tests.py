@@ -1,16 +1,20 @@
+from datetime import datetime, timedelta
+
+from django.conf import settings
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.utils import timezone
 
-from events.models import Event, Stream, CustomAPIKey
-from datetime import datetime, timedelta
+from events.models import CustomAPIKey, Event, Stream
 
 
 class MuxyAPITestCase(APITestCase):
-    def authenticate_with_api_key(self, name=None, is_web=False):
+    def authenticate_with_api_key(self, name=None, is_web=False, stream_key=None):
         _, key = self.create_api_key(name=name, is_web=is_web)
-        self.client.credentials(HTTP_AUTHORIZATION=f"Api-Key {key}")
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Api-Key {key}", HTTP_X_STREAM_KEY=stream_key
+        )
 
     def create_api_key(self, name=None, is_web=False):
         return CustomAPIKey.objects.create_key(name=name or "test", is_web=is_web)
@@ -18,10 +22,7 @@ class MuxyAPITestCase(APITestCase):
 
 class EventTests(MuxyAPITestCase):
     def test_create_event(self):
-        """
-        Ensure we can create a new Event object
-
-        """
+        """Ensure we can create a new Event object"""
         url = reverse("event-list")
 
         starts_at = timezone.make_aware(datetime.today())
@@ -43,10 +44,7 @@ class EventTests(MuxyAPITestCase):
 
 class StreamTests(MuxyAPITestCase):
     def test_create_stream(self):
-        """
-        Ensure we can create a new Stream object for an exiting Event
-
-        """
+        """Ensure we can create a new Stream object for an exiting Event"""
         # Build parameters
         event = self.create_some_event()
         event_url = reverse("event-detail", kwargs={"pk": event.pk})
@@ -72,7 +70,7 @@ class StreamTests(MuxyAPITestCase):
         self.assertEqual(stream.publisher_name, "Performer #1")
         self.assertEqual(stream.event, event)
 
-    def test_create_stream_web_client(self):
+    def test_create_stream_from_web_client(self):
         """
         Ensure we can create a new Stream object for an exiting Event using a
         Web API key
@@ -103,6 +101,63 @@ class StreamTests(MuxyAPITestCase):
         self.assertEqual(stream.publisher_name, "Performer #1")
         self.assertEqual(stream.event, event)
 
+    def test_delete_stream(self):
+        """Ensure we can delete a Stream from an existing Event"""
+        event = self.create_some_event()
+        stream = self.create_some_stream(event)
+        self.authenticate_with_api_key()
+        response = self.client.delete(
+            reverse("stream-detail", kwargs={"pk": stream.pk}), format="json"
+        )
+
+        # Assert response
+        self.assertEqual(
+            response.status_code, status.HTTP_204_NO_CONTENT, response.data
+        )
+
+        # Assert database
+        self.assertEqual(Stream.objects.count(), 0)
+
+    def test_delete_stream_from_web_client(self):
+        """
+        Ensure we can delete a Stream from an existing Event using a Web API key
+        with the correct key.
+
+        """
+        event = self.create_some_event()
+        stream = self.create_some_stream(event)
+        self.authenticate_with_api_key(is_web=True, stream_key=stream.key)
+        response = self.client.delete(
+            reverse("stream-detail", kwargs={"pk": stream.pk}), format="json"
+        )
+
+        # Assert response
+        self.assertEqual(
+            response.status_code, status.HTTP_204_NO_CONTENT, response.data
+        )
+
+        # Assert database
+        self.assertEqual(Stream.objects.count(), 0)
+
+    def test_delete_stream_from_web_client_wrong_key(self):
+        """
+        Ensure we can delete a Stream from an existing Event using a Web API key
+        with the correct key.
+
+        """
+        event = self.create_some_event()
+        stream = self.create_some_stream(event)
+        self.authenticate_with_api_key(is_web=True, stream_key="wrong_key")
+        response = self.client.delete(
+            reverse("stream-detail", kwargs={"pk": stream.pk}), format="json"
+        )
+
+        # Assert response
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+
+        # Assert database
+        self.assertEqual(Stream.objects.count(), 1)
+
     def create_some_event(self):
         starts_at = timezone.make_aware(datetime.today())
         ends_at = starts_at + timedelta(hours=2)
@@ -112,4 +167,16 @@ class StreamTests(MuxyAPITestCase):
             url="https://solstice.com",
             starts_at=starts_at,
             ends_at=ends_at,
+        )
+
+    def create_some_stream(self, event):
+        starts_at = event.starts_at
+        ends_at = starts_at + timedelta(minutes=30)
+
+        return Stream.objects.create(
+            event=event,
+            starts_at=starts_at,
+            ends_at=ends_at,
+            publisher_name="Performer #1",
+            publisher_email="performer1@example.com",
         )

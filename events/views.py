@@ -1,7 +1,8 @@
 from datetime import timedelta
 
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
+from django.http import (HttpResponse, HttpResponseForbidden,
+                         HttpResponseRedirect)
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
@@ -9,13 +10,9 @@ from rest_framework import permissions, viewsets
 from rest_framework.exceptions import ParseError
 
 from events.models import Event, Stream
-from events.permissions import HasCustomAPIKey
-from events.serializers import (
-    EventSerializer,
-    PublicEventSerializer,
-    StreamSerializer,
-    PublicStreamSerializer,
-)
+from events.permissions import HasCustomAPIKey, HasStreamKey
+from events.serializers import (EventSerializer, PublicEventSerializer,
+                                PublicStreamSerializer, StreamSerializer)
 
 
 class RtmpRedirect(HttpResponseRedirect):
@@ -45,7 +42,7 @@ class EventViewSet(viewsets.ModelViewSet, APIKeyViewMixin):
 
 class StreamViewSet(viewsets.ModelViewSet, APIKeyViewMixin):
     queryset = Stream.objects.all().order_by("-event__starts_at", "starts_at")
-    permission_classes = [HasCustomAPIKey | permissions.IsAuthenticated]
+    permission_classes = [HasCustomAPIKey | permissions.IsAuthenticated, HasStreamKey]
     filterset_fields = (
         "event__id",
         "event__slug",
@@ -74,7 +71,7 @@ class StreamViewSet(viewsets.ModelViewSet, APIKeyViewMixin):
 
     @property
     def has_stream_key(self):
-        return "X-Key" in self.request.headers
+        return settings.STREAM_KEY_HEADER in self.request.headers
 
 
 @require_POST
