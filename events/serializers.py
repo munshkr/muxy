@@ -37,6 +37,12 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
         return attrs
 
 
+class PublicEventSerializer(EventSerializer):
+    class Meta:
+        model = Event
+        exclude = ("rtmp_url",)
+
+
 class StreamSerializer(serializers.HyperlinkedModelSerializer):
     recordings = serializers.SerializerMethodField()
     key = serializers.CharField(required=False)

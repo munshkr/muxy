@@ -3,7 +3,7 @@ from rest_framework_api_key.permissions import BaseHasAPIKey
 from .models import CustomAPIKey
 
 
-class HasUserAPIKey(BaseHasAPIKey):
+class HasCustomAPIKey(BaseHasAPIKey):
     model = CustomAPIKey
 
     def has_permission(self, request, view):
