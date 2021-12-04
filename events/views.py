@@ -23,6 +23,7 @@ class RtmpRedirect(HttpResponseRedirect):
 
 
 class APIKeyViewMixin:
+    @property
     def is_web_request(self):
         return hasattr(self.request, "is_web") and self.request.is_web
 
@@ -37,7 +38,7 @@ class EventViewSet(viewsets.ModelViewSet, APIKeyViewMixin):
     )
 
     def get_serializer_class(self):
-        if self.is_web_request():
+        if self.is_web_request:
             return PublicEventSerializer
         return EventSerializer
 
@@ -54,9 +55,26 @@ class StreamViewSet(viewsets.ModelViewSet, APIKeyViewMixin):
     )
 
     def get_serializer_class(self):
-        if self.is_web_request() and self.action != "create":
+        # create (POST) - StreamSerializer, allow all
+        # update, partial_update (PUT, PATCH) - StreamSerializer, allow only if user is owner or staff
+        # delete (DELETE) - StreamSerializer, allow only if user is owner or staff
+        # retrieve (GET) - PublicStreamSerializer, allow all
+        # list (GET) - PublicStreamSerializer, allow all
+        if self.is_public_readonly_request:
             return PublicStreamSerializer
         return StreamSerializer
+
+    @property
+    def is_public_readonly_request(self):
+        return (
+            self.is_web_request
+            and not self.has_stream_key
+            and self.action in ("list", "retrieve")
+        )
+
+    @property
+    def has_stream_key(self):
+        return "X-Key" in self.request.headers
 
 
 @require_POST

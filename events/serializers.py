@@ -23,7 +23,7 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
         ends_at = attrs.get("ends_at")
 
         if starts_at and ends_at:
-            if ends_at < self.starts_at:
+            if ends_at < starts_at:
                 raise serializers.ValidationError("event ends before starting")
 
             preparation_time = attrs.get("preparation_time")
