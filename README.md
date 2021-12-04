@@ -1,5 +1,7 @@
 # muxy
 
+[![Django CI](https://github.com/munshkr/muxy/actions/workflows/django.yml/badge.svg)](https://github.com/munshkr/muxy/actions/workflows/django.yml)
+
 RTMP-based streaming muxer for online events
 
 Allows user to organize online self-streaming events, where each user can
