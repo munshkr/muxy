@@ -158,6 +158,44 @@ class StreamTests(MuxyAPITestCase):
         # Assert database
         self.assertEqual(Stream.objects.count(), 1)
 
+    def test_retrieve_stream(self):
+        """Ensure we can retrieve a Stream from an existing Event"""
+        event = self.create_some_event()
+        stream = self.create_some_stream(event)
+        self.authenticate_with_api_key()
+        response = self.client.get(
+            reverse("stream-detail", kwargs={"pk": stream.pk}), format="json"
+        )
+
+        # Assert response
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data.get("publisher_name"), stream.publisher_name)
+        self.assertTrue("key" in response.data)
+        self.assertEqual(response.data.get("key"), stream.key)
+        self.assertTrue("publisher_email" in response.data)
+        self.assertEqual(response.data.get("publisher_email"), stream.publisher_email)
+
+    def test_retrieve_stream_from_web_client_no_key(self):
+        """
+        Ensure we can retrieve a Stream from an existing Event using a Web API
+        key and no streaming key.
+
+        No private fields should be returned.
+
+        """
+        event = self.create_some_event()
+        stream = self.create_some_stream(event)
+        self.authenticate_with_api_key(is_web=True)
+        response = self.client.get(
+            reverse("stream-detail", kwargs={"pk": stream.pk}), format="json"
+        )
+
+        # Assert response
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data.get("publisher_name"), stream.publisher_name)
+        self.assertTrue("key" not in response.data)
+        self.assertTrue("publisher_email" not in response.data)
+
     def create_some_event(self):
         starts_at = timezone.make_aware(datetime.today())
         ends_at = starts_at + timedelta(hours=2)

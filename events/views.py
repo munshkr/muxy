@@ -1,8 +1,7 @@
 from datetime import timedelta
 
 from django.conf import settings
-from django.http import (HttpResponse, HttpResponseForbidden,
-                         HttpResponseRedirect)
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
@@ -11,8 +10,12 @@ from rest_framework.exceptions import ParseError
 
 from events.models import Event, Stream
 from events.permissions import HasCustomAPIKey, HasStreamKey
-from events.serializers import (EventSerializer, PublicEventSerializer,
-                                PublicStreamSerializer, StreamSerializer)
+from events.serializers import (
+    EventSerializer,
+    PublicEventSerializer,
+    PublicStreamSerializer,
+    StreamSerializer,
+)
 
 
 class RtmpRedirect(HttpResponseRedirect):
@@ -52,11 +55,6 @@ class StreamViewSet(viewsets.ModelViewSet, APIKeyViewMixin):
     )
 
     def get_serializer_class(self):
-        # create (POST) - StreamSerializer, allow all
-        # update, partial_update (PUT, PATCH) - StreamSerializer, allow only if user is owner or staff
-        # delete (DELETE) - StreamSerializer, allow only if user is owner or staff
-        # retrieve (GET) - PublicStreamSerializer, allow all
-        # list (GET) - PublicStreamSerializer, allow all
         if self.is_public_readonly_request:
             return PublicStreamSerializer
         return StreamSerializer
@@ -71,7 +69,7 @@ class StreamViewSet(viewsets.ModelViewSet, APIKeyViewMixin):
 
     @property
     def has_stream_key(self):
-        return settings.STREAM_KEY_HEADER in self.request.headers
+        return self.request.headers.get(settings.STREAM_KEY_HEADER)
 
 
 @require_POST
