@@ -10,7 +10,12 @@ from rest_framework.exceptions import ParseError
 
 from events.models import Event, Stream
 from events.permissions import HasCustomAPIKey
-from events.serializers import EventSerializer, PublicEventSerializer, StreamSerializer
+from events.serializers import (
+    EventSerializer,
+    PublicEventSerializer,
+    StreamSerializer,
+    PublicStreamSerializer,
+)
 
 
 class RtmpRedirect(HttpResponseRedirect):
@@ -25,7 +30,7 @@ class APIKeyViewMixin:
 class EventViewSet(viewsets.ModelViewSet, APIKeyViewMixin):
     serializer_class = EventSerializer
     queryset = Event.objects.all().order_by("-starts_at")
-    permission_classes = [HasCustomAPIKey]
+    permission_classes = [HasCustomAPIKey | permissions.IsAuthenticated]
     filterset_fields = (
         "slug",
         "name",
@@ -38,9 +43,8 @@ class EventViewSet(viewsets.ModelViewSet, APIKeyViewMixin):
 
 
 class StreamViewSet(viewsets.ModelViewSet, APIKeyViewMixin):
-    serializer_class = StreamSerializer
     queryset = Stream.objects.all().order_by("-event__starts_at", "starts_at")
-    permission_classes = [permissions.IsAuthenticated | HasCustomAPIKey]
+    permission_classes = [HasCustomAPIKey | permissions.IsAuthenticated]
     filterset_fields = (
         "event__id",
         "event__slug",
@@ -48,6 +52,11 @@ class StreamViewSet(viewsets.ModelViewSet, APIKeyViewMixin):
         "publisher_email",
         "key",
     )
+
+    def get_serializer_class(self):
+        if self.is_web_request() and self.action != "create":
+            return PublicStreamSerializer
+        return StreamSerializer
 
 
 @require_POST

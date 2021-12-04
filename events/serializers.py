@@ -77,3 +77,12 @@ class StreamSerializer(serializers.HyperlinkedModelSerializer):
                 )
 
         return attrs
+
+
+class PublicStreamSerializer(StreamSerializer):
+    recordings = None
+    key = None
+
+    class Meta:
+        model = Stream
+        exclude = ("key", "publisher_email")
