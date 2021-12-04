@@ -49,12 +49,12 @@ class RTMPURLField(models.URLField):
         )
 
 
-class UserAPIKey(AbstractAPIKey):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class CustomAPIKey(AbstractAPIKey):
+    is_web = models.BooleanField(default=True)
 
     class Meta(AbstractAPIKey.Meta):
-        verbose_name = "User API key"
-        verbose_name_plural = "User API keys"
+        verbose_name = "API key"
+        verbose_name_plural = "API keys"
 
 
 class Event(models.Model):

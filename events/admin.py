@@ -2,7 +2,13 @@ from django.contrib import admin
 from rest_framework_api_key.admin import APIKeyModelAdmin
 
 from events.forms import StreamForm
-from events.models import Event, EventStreamURL, Stream, StreamNotification, UserAPIKey
+from events.models import (
+    Event,
+    EventStreamURL,
+    Stream,
+    StreamNotification,
+    CustomAPIKey,
+)
 
 
 class EventStreamURLInline(admin.TabularInline):
@@ -10,9 +16,9 @@ class EventStreamURLInline(admin.TabularInline):
     extra = 1
 
 
-class UserAPIKeyAdmin(APIKeyModelAdmin):
-    list_display = [*APIKeyModelAdmin.list_display, "user"]
-    search_fields = [*APIKeyModelAdmin.search_fields, "user"]
+class CustomAPIKeyAdmin(APIKeyModelAdmin):
+    list_display = [*APIKeyModelAdmin.list_display, "is_web"]
+    search_fields = [*APIKeyModelAdmin.search_fields, "is_web"]
 
 
 class EventAdmin(admin.ModelAdmin):
@@ -54,7 +60,7 @@ class StreamNotificationAdmin(admin.ModelAdmin):
     list_display = ("stream", "kind", "sent_at")
 
 
-admin.site.register(UserAPIKey, UserAPIKeyAdmin)
+admin.site.register(CustomAPIKey, CustomAPIKeyAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Stream, StreamAdmin)
 admin.site.register(StreamNotification, StreamNotificationAdmin)
