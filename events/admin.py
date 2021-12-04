@@ -1,13 +1,14 @@
 from django.contrib import admin
 from rest_framework_api_key.admin import APIKeyModelAdmin
+from rest_framework_api_key.models import APIKey
 
 from events.forms import StreamForm
 from events.models import (
+    CustomAPIKey,
     Event,
     EventStreamURL,
     Stream,
     StreamNotification,
-    CustomAPIKey,
 )
 
 
@@ -60,6 +61,7 @@ class StreamNotificationAdmin(admin.ModelAdmin):
     list_display = ("stream", "kind", "sent_at")
 
 
+admin.site.unregister(APIKey)
 admin.site.register(CustomAPIKey, CustomAPIKeyAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Stream, StreamAdmin)
