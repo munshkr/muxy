@@ -103,11 +103,14 @@ class EventStreamURL(models.Model):
     event = models.ForeignKey(
         Event, on_delete=models.CASCADE, related_name="stream_urls"
     )
-    url = models.URLField(unique=True)
+    url = models.URLField()
     name = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return self.url
+
+    class Meta:
+        unique_together = ("event", "url")
 
 
 def get_uuid4():
