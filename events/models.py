@@ -113,6 +113,20 @@ class EventStreamURL(models.Model):
         unique_together = ("event", "url")
 
 
+class EventSupportURL(models.Model):
+    event = models.ForeignKey(
+        Event, on_delete=models.CASCADE, related_name="support_urls"
+    )
+    url = models.URLField()
+    name = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.url
+
+    class Meta:
+        unique_together = ("event", "url")
+
+
 def get_uuid4():
     return str(uuid.uuid4())
 

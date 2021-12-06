@@ -7,6 +7,7 @@ from events.models import (
     CustomAPIKey,
     Event,
     EventStreamURL,
+    EventSupportURL,
     Stream,
     StreamNotification,
 )
@@ -14,6 +15,11 @@ from events.models import (
 
 class EventStreamURLInline(admin.TabularInline):
     model = EventStreamURL
+    extra = 1
+
+
+class EventSupportURLInline(admin.TabularInline):
+    model = EventSupportURL
     extra = 1
 
 
@@ -25,7 +31,7 @@ class CustomAPIKeyAdmin(APIKeyModelAdmin):
 class EventAdmin(admin.ModelAdmin):
     list_display = ("id", "slug", "name", "url", "starts_at", "ends_at", "active")
     ordering = ("-starts_at",)
-    inlines = [EventStreamURLInline]
+    inlines = [EventStreamURLInline, EventSupportURLInline]
 
 
 class StreamAdmin(admin.ModelAdmin):

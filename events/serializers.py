@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from events.models import Event, EventStreamURL, Stream
+from events.models import Event, EventStreamURL, EventSupportURL, Stream
 
 
 class EventStreamURLSerializer(serializers.HyperlinkedModelSerializer):
@@ -9,10 +9,17 @@ class EventStreamURLSerializer(serializers.HyperlinkedModelSerializer):
         fields = ("url", "name")
 
 
+class EventSupportURLSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = EventSupportURL
+        fields = ("url", "name")
+
+
 class EventSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="event-detail")
     event_url = serializers.CharField(source="url")
     stream_urls = EventStreamURLSerializer(many=True, read_only=True)
+    support_urls = EventSupportURLSerializer(many=True, read_only=True)
 
     class Meta:
         model = Event
