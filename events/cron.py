@@ -7,9 +7,9 @@ from django.core.mail import EmailMessage
 from django.db.models import Q
 from django.utils import timezone
 from django_cron import CronJobBase, Schedule
-import logging
 
-from events.models import Stream, StreamNotification
+from .models import Stream, StreamNotification
+from .utils import get_formatted_stream_timeframe
 
 
 class NotifyStreamPreparingJob(CronJobBase):
@@ -46,11 +46,12 @@ class NotifyStreamPreparingJob(CronJobBase):
             body_tpl = f.read()
 
         starts_in = (stream.starts_at - now).seconds // 60
+        starts_at, ends_at = get_formatted_stream_timeframe(stream)
         variables = dict(
             name=stream.publisher_name,
             event_name=stream.event.name,
-            starts_at=stream.starts_at.strftime("%c %Z"),
-            ends_at=stream.ends_at.strftime("%c %Z"),
+            starts_at=starts_at,
+            ends_at=ends_at,
             rtmp_url=stream.event.public_rtmp_url,
             key=stream.key,
             contact_email=stream.event.contact_email,

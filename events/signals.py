@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 from .models import Stream, StreamNotification
+from .utils import get_formatted_stream_timeframe
 
 
 @receiver(post_save, sender=Stream)
@@ -24,11 +25,12 @@ def send_stream_create_email(sender, instance, created, **kwargs):
         with open(template_path) as f:
             body_tpl = f.read()
 
+        starts_at, ends_at = get_formatted_stream_timeframe(stream)
         variables = dict(
             name=stream.publisher_name,
             event_name=stream.event.name,
-            starts_at=stream.starts_at.strftime("%c %Z"),
-            ends_at=stream.ends_at.strftime("%c %Z"),
+            starts_at=starts_at,
+            ends_at=ends_at,
             rtmp_url=stream.event.public_rtmp_url,
             key=stream.key,
             preparation_time=stream.event.preparation_time,
