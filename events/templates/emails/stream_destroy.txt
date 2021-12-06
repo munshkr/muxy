@@ -1,0 +1,7 @@
+Hi $name,
+
+You have removed your stream on "$event_name".
+
+If you have any questions, feel free to reply to this email.
+
+See you!

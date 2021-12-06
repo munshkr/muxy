@@ -183,10 +183,12 @@ class Stream(models.Model):
         return self.is_preparing_at(at) or self.is_active_at(at)
 
     def clean(self):
-        if self.pk and self.starts_at and self.ends_at:
+        if self.starts_at and self.ends_at:
             other_streams = Stream.objects.filter(
                 starts_at__lt=self.ends_at, ends_at__gt=self.starts_at
-            ).exclude(pk=self.pk)
+            )
+            if self.pk:
+                other_streams = other_streams.exclude(pk=self.pk)
             if other_streams.exists():
                 raise ValidationError("overlaps with other streams")
 
@@ -201,8 +203,10 @@ class StreamNotification(models.Model):
     class Kinds(models.TextChoices):
         CREATED = "CR", _("Created")
         PREPARING = "PR", _("Preparing")
+        UPDATED = "UP", _("Updated")
+        REMOVED = "RM", _("Removed")
 
-    stream = models.ForeignKey(Stream, on_delete=models.CASCADE)
+    stream = models.ForeignKey(Stream, on_delete=models.CASCADE, null=True, blank=True)
     kind = models.CharField(max_length=2, choices=Kinds.choices)
     sent_at = models.DateTimeField(blank=True, null=True)
 

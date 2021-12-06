@@ -1,0 +1,13 @@
+Hi $name,
+
+You have modified your stream on "$event_name".
+
+The new information is:
+
+* Name: $name
+* Description: $description
+* Location: $location
+
+If you have any questions, feel free to reply to this email.
+
+Cheers!
