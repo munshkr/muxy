@@ -21,3 +21,13 @@ def get_formatted_stream_timeframe(stream):
     ends_at_s = f"{ends_at_tz} ({ends_at})" if ends_at_tz else ends_at
 
     return starts_at_s, ends_at_s
+
+
+def get_support_channels_test(stream):
+    if stream.event.support_urls.exists():
+        return (
+            "If you have any questions, please reach out to our support channels:\n"
+            + "\n".join(f"* {u.name}: {u.url}" for u in stream.event.support_urls.all())
+        )
+    else:
+        return "If you have any questions, please reach out to our support channels"

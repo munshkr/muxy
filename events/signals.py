@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 from .models import Stream, StreamNotification
-from .utils import get_formatted_stream_timeframe
+from .utils import get_formatted_stream_timeframe, get_support_channels_test
 
 
 @receiver(post_save, sender=Stream)
@@ -82,6 +82,8 @@ def send_stream_email(stream, *, template_name, variables, subject, kind):
     )
     with open(template_path) as f:
         body_tpl = f.read()
+
+    variables.update(support_channels_text=get_support_channels_test(stream))
 
     body = Template(body_tpl).safe_substitute(variables)
     subject = Template(subject).safe_substitute(variables)

@@ -8,6 +8,6 @@ The new information is:
 * Description: $description
 * Location: $location
 
-If you have any questions, feel free to reply to this email.
+$support_channels_text
 
 Cheers!

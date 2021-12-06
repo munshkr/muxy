@@ -13,4 +13,6 @@ We recommend that you start streaming $preparation_time minutes before the start
 time, if you can, to ensure a smoothly transition.  Your stream will be
 published to the event servers at the right time.
 
+$support_channels_text
+
 Have fun :-)
