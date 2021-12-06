@@ -15,8 +15,8 @@ from .utils import get_formatted_stream_timeframe
 def send_stream_create_or_update_email(sender, instance, created, **kwargs):
     if created:
         send_stream_create_email(instance)
-    else:
-        send_stream_update_email(instance)
+    # else:
+    #    send_stream_update_email(instance)
 
 
 @receiver(post_delete, sender=Stream)
