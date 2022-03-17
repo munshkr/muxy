@@ -4,6 +4,7 @@ from string import Template
 from django.core.mail import EmailMessage
 from django.core.management.base import BaseCommand, CommandError
 from events.models import Event, Stream
+from events.utils import get_formatted_stream_timeframe
 
 
 class Command(BaseCommand):
@@ -53,11 +54,12 @@ class Command(BaseCommand):
             body_tpl = f.read()
 
         for stream in streams:
+            starts_at, ends_at = get_formatted_stream_timeframe(stream)
             variables = dict(
                 name=stream.publisher_name,
                 event_name=stream.event.name,
-                starts_at=stream.starts_at.strftime("%c %Z"),
-                ends_at=stream.ends_at.strftime("%c %Z"),
+                starts_at=starts_at,
+                ends_at=ends_at,
                 rtmp_url=stream.event.public_rtmp_url,
                 key=stream.key,
                 contact_email=stream.event.contact_email,
