@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from events.models import Event, EventStreamURL, EventSupportURL, Stream
+from events.models import (Event, EventStreamURL, EventSupportURL, Stream,
+                           StreamArchiveURL)
 
 
 class EventStreamURLSerializer(serializers.HyperlinkedModelSerializer):
@@ -50,9 +51,16 @@ class PublicEventSerializer(EventSerializer):
         exclude = ("rtmp_url",)
 
 
+class StreamArchiveURLSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = StreamArchiveURL
+        fields = ("url", "name")
+
+
 class StreamSerializer(serializers.HyperlinkedModelSerializer):
     recordings = serializers.SerializerMethodField()
     key = serializers.CharField(required=False)
+    archive_urls = StreamArchiveURLSerializer(many=True, read_only=True)
 
     class Meta:
         model = Stream
