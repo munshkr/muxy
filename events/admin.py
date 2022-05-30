@@ -9,6 +9,7 @@ from events.models import (
     EventStreamURL,
     EventSupportURL,
     Stream,
+    StreamArchiveURL,
     StreamNotification,
 )
 
@@ -21,6 +22,11 @@ class EventStreamURLInline(admin.TabularInline):
 class EventSupportURLInline(admin.TabularInline):
     model = EventSupportURL
     extra = 1
+
+
+class StreamArchiveURLInline(admin.TabularInline):
+    model = StreamArchiveURL
+    extra = 2
 
 
 class CustomAPIKeyAdmin(APIKeyModelAdmin):
@@ -47,6 +53,7 @@ class StreamAdmin(admin.ModelAdmin):
     form = StreamForm
     ordering = ("-starts_at",)
     list_filter = ("event",)
+    inlines = [StreamArchiveURLInline]
 
     def get_event_name(self, obj):
         return obj.event.name
@@ -66,9 +73,13 @@ class StreamAdmin(admin.ModelAdmin):
 class StreamNotificationAdmin(admin.ModelAdmin):
     list_display = ("stream", "kind", "sent_at")
 
+class StreamArchiveURLAdmin(admin.ModelAdmin):
+    list_display = ("stream", "url", "name")
+
 
 admin.site.unregister(APIKey)
 admin.site.register(CustomAPIKey, CustomAPIKeyAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Stream, StreamAdmin)
 admin.site.register(StreamNotification, StreamNotificationAdmin)
+admin.site.register(StreamArchiveURL, StreamArchiveURLAdmin)
