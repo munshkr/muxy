@@ -138,6 +138,7 @@ class Stream(models.Model):
     description = models.CharField(max_length=255, blank=True)
     location = models.CharField(max_length=120, blank=True)
     timezone = models.CharField(max_length=80, blank=True)
+    tags = models.CharField(max_length=255, blank=True, null=False)
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
     key = models.CharField(max_length=36, default=get_uuid4, editable=True, unique=True)
