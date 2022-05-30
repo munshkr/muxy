@@ -226,3 +226,15 @@ class StreamNotification(models.Model):
 
     def __str__(self):
         return f"[{self.kind}] {self.stream}"
+
+
+class StreamArchiveURL(models.Model):
+    stream = models.ForeignKey(Stream, on_delete=models.CASCADE, null=True, blank=True)
+    url = models.URLField()
+    name = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.url
+
+    class Meta:
+        unique_together = ("stream", "url")
