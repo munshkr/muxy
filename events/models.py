@@ -229,7 +229,7 @@ class StreamNotification(models.Model):
 
 
 class StreamArchiveURL(models.Model):
-    stream = models.ForeignKey(Stream, on_delete=models.CASCADE, null=True, blank=True)
+    stream = models.ForeignKey(Stream, on_delete=models.CASCADE, related_name="archive_urls")
     url = models.URLField()
     name = models.CharField(max_length=255, blank=True)
 
