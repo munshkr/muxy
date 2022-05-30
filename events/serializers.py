@@ -61,7 +61,7 @@ class StreamArchiveURLSerializer(serializers.HyperlinkedModelSerializer):
 class StreamSerializer(serializers.HyperlinkedModelSerializer):
     recordings = serializers.SerializerMethodField()
     key = serializers.CharField(required=False)
-    archive_urls = StreamArchiveURLSerializer(many=True)
+    archive_urls = StreamArchiveURLSerializer(many=True, required=False)
 
     class Meta:
         model = Stream
@@ -69,7 +69,7 @@ class StreamSerializer(serializers.HyperlinkedModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        archive_urls_data = validated_data.pop('archive_urls')
+        archive_urls_data = validated_data.pop('archive_urls', [])
         stream = Stream.objects.create(**validated_data)
         for archive_url_data in archive_urls_data:
             StreamArchiveURL.objects.create(stream=stream, **archive_url_data)
@@ -77,7 +77,7 @@ class StreamSerializer(serializers.HyperlinkedModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        archive_urls_data = validated_data.pop('archive_urls')
+        archive_urls_data = validated_data.pop('archive_urls', [])
         instance = super().update(instance, validated_data)
         instance.archive_urls.all().delete()
         for archive_url_data in archive_urls_data:
