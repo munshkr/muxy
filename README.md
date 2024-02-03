@@ -61,3 +61,8 @@ To run server locally, use:
 ## Deploy
 
 Read the [deployment](https://github.com/munshkr/muxy/wiki/Deploy) wiki page.
+
+## License
+
+This project is licensed under the GNU Affero General Public License v3.0.
+See the [LICENSE](LICENSE) file for details.
