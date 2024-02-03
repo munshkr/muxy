@@ -18,6 +18,7 @@ jobs:
         image: postgres
         # Provide the password for postgres
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         # Set health checks to wait until postgres has started
         options: >-
@@ -42,3 +43,6 @@ jobs:
           python manage.py test
         env:
           PGHOST: postgres
+          PGPORT: 5432
+          PGUSER: postgres
+          PGPASSWORD: postgres
