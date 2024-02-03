@@ -31,7 +31,7 @@ Copy `env.sample` to `.env` and update if necessary. You should set at least:
 - `CORS_ALLOWED_ORIGINS`: Add your request origin.
 - `LANGUAGE_CODE`: Set default language code.
 - `TIME_ZONE`: Set server time zone if different than UTC.
-- `DB_PATH`: Set to a valid sqlite3 database file
+- `PG*`: Set to corresponding Postgres database server
 
 Now, run migrations to create and prepare database:
 
