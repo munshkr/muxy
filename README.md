@@ -54,7 +54,7 @@ Copy `env.sample` to `.env` and update if necessary. You should set at least:
 - `CORS_ALLOWED_ORIGINS`: Add your request origin.
 - `LANGUAGE_CODE`: Set default language code.
 - `TIME_ZONE`: Set server time zone if different than UTC.
-- `PG*`: Set to corresponding Postgres database server
+- `DB_PATH`: Set path where to save database file
 
 Now, run migrations to create and prepare database:
 
