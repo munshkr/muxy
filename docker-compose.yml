@@ -1,38 +1,18 @@
 version: "3.7"
 
 services:
-  db:
-    image: postgres
-    env_file:
-      - .env
-    environment:
-      - POSTGRES_DB=muxy
-      - POSTGRES_USER=muxy
-      - POSTGRES_PASSWORD=muxy
-    ports:
-      - 5432:5432
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
   muxy:
     build: .
     command: gunicorn muxy.wsgi:application --workers 3 --bind 0.0.0.0:8000
     image: muxy:latest
     env_file:
       - .env
-    environment:
-      - PGHOST=db
-      - PGDATABASE=muxy
-      - PGUSER=muxy
-      - PGPASSWORD=muxy
     volumes:
       - .:/usr/src/app
     stdin_open: true
     tty: true
     ports:
       - 8000:8000
-    depends_on:
-      - db
 
   nginx-rtmp:
     build: ./docker/nginx-rtmp/
@@ -41,6 +21,3 @@ services:
       - 8080:8080
     depends_on:
       - muxy
-
-volumes:
-  pgdata:
