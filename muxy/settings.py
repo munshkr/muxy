@@ -136,7 +136,7 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 1000,
 }
 
-NGINX_RTMP_UPDATE_TIMEOUT = int(os.getenv("NGINX_RTMP_UPDATE_TIMEOUT", "30"))
+NGINX_RTMP_UPDATE_TIMEOUT = int(os.getenv("NGINX_RTMP_UPDATE_TIMEOUT", "10"))
 
 EMAIL_BACKEND = os.getenv(
     "EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
