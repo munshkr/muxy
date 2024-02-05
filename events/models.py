@@ -66,8 +66,9 @@ class Event(models.Model):
     ends_at = models.DateTimeField()
     active = models.BooleanField(default=True)
     preparation_time = models.PositiveIntegerField(default=5)
-    rtmp_url = RTMPURLField(blank=True, null=True)
     public_rtmp_url = RTMPURLField(blank=True, null=True)
+    rtmp_url = RTMPURLField(blank=True, null=True)
+    test_rtmp_url = RTMPURLField(blank=True, null=True)
     contact_email = models.EmailField(blank=True, null=True)
 
     def __str__(self):
@@ -92,6 +93,11 @@ class Event(models.Model):
     def resolved_rtmp_url(self):
         if self.rtmp_url:
             return resolve_url(self.rtmp_url)
+
+    @property
+    def resolved_test_rtmp_url(self):
+        if self.test_rtmp_url:
+            return resolve_url(self.test_rtmp_url)
 
     @property
     def duration(self):
@@ -230,7 +236,9 @@ class StreamNotification(models.Model):
 
 
 class StreamArchiveURL(models.Model):
-    stream = models.ForeignKey(Stream, on_delete=models.CASCADE, related_name="archive_urls")
+    stream = models.ForeignKey(
+        Stream, on_delete=models.CASCADE, related_name="archive_urls"
+    )
     url = models.URLField()
     name = models.CharField(max_length=255, blank=True)
 
