@@ -8,7 +8,6 @@ from urllib.parse import urljoin, urlparse
 
 from autoslug import AutoSlugField
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -57,6 +56,18 @@ class CustomAPIKey(AbstractAPIKey):
         verbose_name_plural = "API keys"
 
 
+def get_default_public_rtmp_url():
+    return settings.DEFAULT_PUBLIC_RTMP_URL
+
+
+def get_default_rtmp_url():
+    return settings.DEFAULT_RTMP_URL
+
+
+def get_default_test_rtmp_url():
+    return settings.DEFAULT_TEST_RTMP_URL
+
+
 class Event(models.Model):
     name = models.CharField(max_length=200)
     slug = AutoSlugField(null=True, default=None, populate_from="name", unique="name")
@@ -66,8 +77,13 @@ class Event(models.Model):
     ends_at = models.DateTimeField()
     active = models.BooleanField(default=True)
     preparation_time = models.PositiveIntegerField(default=5)
-    rtmp_url = RTMPURLField(blank=True, null=True)
-    public_rtmp_url = RTMPURLField(blank=True, null=True)
+    public_rtmp_url = RTMPURLField(
+        blank=True, null=True, default=get_default_public_rtmp_url
+    )
+    rtmp_url = RTMPURLField(blank=True, null=True, default=get_default_rtmp_url)
+    test_rtmp_url = RTMPURLField(
+        blank=True, null=True, default=get_default_test_rtmp_url
+    )
     contact_email = models.EmailField(blank=True, null=True)
 
     def __str__(self):
@@ -92,6 +108,11 @@ class Event(models.Model):
     def resolved_rtmp_url(self):
         if self.rtmp_url:
             return resolve_url(self.rtmp_url)
+
+    @property
+    def resolved_test_rtmp_url(self):
+        if self.test_rtmp_url:
+            return resolve_url(self.test_rtmp_url)
 
     @property
     def duration(self):
@@ -230,7 +251,9 @@ class StreamNotification(models.Model):
 
 
 class StreamArchiveURL(models.Model):
-    stream = models.ForeignKey(Stream, on_delete=models.CASCADE, related_name="archive_urls")
+    stream = models.ForeignKey(
+        Stream, on_delete=models.CASCADE, related_name="archive_urls"
+    )
     url = models.URLField()
     name = models.CharField(max_length=255, blank=True)
 

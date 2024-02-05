@@ -207,8 +207,8 @@ class StreamTests(MuxyAPITestCase):
 
         data = {
             "archive_urls": [
-                { "url": "https://archive.org/foo", "name": "archive.org" },
-                { "url": "https://youtube.com/foo", "name": "youtube.com" },
+                {"url": "https://archive.org/foo", "name": "archive.org"},
+                {"url": "https://youtube.com/foo", "name": "youtube.com"},
             ]
         }
         response = self.client.patch(
