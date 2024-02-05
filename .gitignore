@@ -1,6 +1,6 @@
+.env*
+.venv/
 .vscode/
 __pycache__/
-db.sqlite3
-.env*
+muxy.db
 static/
-.venv/
