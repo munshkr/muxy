@@ -8,7 +8,6 @@ from urllib.parse import urljoin, urlparse
 
 from autoslug import AutoSlugField
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -57,6 +56,18 @@ class CustomAPIKey(AbstractAPIKey):
         verbose_name_plural = "API keys"
 
 
+def get_default_public_rtmp_url():
+    return settings.DEFAULT_PUBLIC_RTMP_URL
+
+
+def get_default_rtmp_url():
+    return settings.DEFAULT_RTMP_URL
+
+
+def get_default_test_rtmp_url():
+    return settings.DEFAULT_TEST_RTMP_URL
+
+
 class Event(models.Model):
     name = models.CharField(max_length=200)
     slug = AutoSlugField(null=True, default=None, populate_from="name", unique="name")
@@ -66,9 +77,13 @@ class Event(models.Model):
     ends_at = models.DateTimeField()
     active = models.BooleanField(default=True)
     preparation_time = models.PositiveIntegerField(default=5)
-    public_rtmp_url = RTMPURLField(blank=True, null=True)
-    rtmp_url = RTMPURLField(blank=True, null=True)
-    test_rtmp_url = RTMPURLField(blank=True, null=True)
+    public_rtmp_url = RTMPURLField(
+        blank=True, null=True, default=get_default_public_rtmp_url
+    )
+    rtmp_url = RTMPURLField(blank=True, null=True, default=get_default_rtmp_url)
+    test_rtmp_url = RTMPURLField(
+        blank=True, null=True, default=get_default_test_rtmp_url
+    )
     contact_email = models.EmailField(blank=True, null=True)
 
     def __str__(self):
