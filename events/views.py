@@ -82,18 +82,18 @@ def on_publish(request):
 
     now = timezone.now()
 
-    # Check if stream is valid
+    # If stream is not valid (i.e. not preparing or inactive)
     if not stream.is_valid_at(now):
         # If event has a test RTMP URL, redirect to it
         if stream.event.test_rtmp_url:
             print(
-                "[PUBLISH] Stream is not valid at %s. Redirect to Test RTMP URL."
+                "[PUBLISH] Stream is not valid now (%s). Redirect to Test RTMP URL."
                 % (now)
             )
             return RtmpRedirect(stream.resolved_test_rtmp_url)
         else:
             # Otherwise, deny the stream
-            print("[PUBLISH] Stream is not valid at %s" % (now))
+            print("[PUBLISH] Stream is not valid now (%s)" % (now))
             return HttpResponseForbidden("Stream is not valid now")
 
     # If event has a custom RTMP URL, redirect to it
