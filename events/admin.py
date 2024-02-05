@@ -45,6 +45,7 @@ class StreamAdmin(admin.ModelAdmin):
         "id",
         "get_event_name",
         "publisher_name",
+        "title",
         "starts_at",
         "ends_at",
         "live_at",
@@ -72,6 +73,7 @@ class StreamAdmin(admin.ModelAdmin):
 
 class StreamNotificationAdmin(admin.ModelAdmin):
     list_display = ("stream", "kind", "sent_at")
+
 
 class StreamArchiveURLAdmin(admin.ModelAdmin):
     list_display = ("stream", "url", "name")
