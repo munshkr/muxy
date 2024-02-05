@@ -84,22 +84,35 @@ def on_publish(request):
 
     # Check if stream is valid
     if not stream.is_valid_at(now):
-        print("[PUBLISH] Stream is not valid at %s" % (now))
-        return HttpResponseForbidden("Stream is not valid now")
+        # If event has a test RTMP URL, redirect to it
+        if stream.event.test_rtmp_url:
+            print(
+                "[PUBLISH] Stream is not valid at %s. Redirect to Test RTMP URL."
+                % (now)
+            )
+            return RtmpRedirect(stream.resolved_test_rtmp_url)
+        else:
+            # Otherwise, deny the stream
+            print("[PUBLISH] Stream is not valid at %s" % (now))
+            return HttpResponseForbidden("Stream is not valid now")
 
     # If event has a custom RTMP URL, redirect to it
     if stream.event.rtmp_url:
         if stream.is_preparing_at(now):
-            print(
-                "[PUBLISH] Stream is preparing and not active yet. Allow but do not redirect."
-            )
-            return HttpResponse("OK")
+            if stream.event.test_rtmp_url:
+                print(
+                    "[PUBLISH] Stream is preparing and not active yet. Redirect to Test RTMP URL."
+                )
+                return RtmpRedirect(stream.resolved_test_rtmp_url)
+            else:
+                print("[PUBLISH] Stream is preparing and not active yet. Allow.")
+                return HttpResponse("OK")
         else:
             # Set the stream live
             stream.live_at = now
             stream.save()
 
-            print("[PUBLISH] Stream is active. Allow and redirect.")
+            print("[PUBLISH] Stream is active. Allow and redirect to custom RTMP URL.")
             return RtmpRedirect(stream.resolved_rtmp_url)
     else:
         print("[PUBLISH] Stream is active. Allow.")
