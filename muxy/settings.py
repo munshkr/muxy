@@ -32,6 +32,11 @@ DEBUG = int(os.getenv("DEBUG") or "0") > 0
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
+# For Docker, we need to trust the X-Forwarded-Proto header, otherwise
+# Django will not detect that the request is secure and will generate
+# http:// URLs.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 # Application definition
 
 INSTALLED_APPS = [
