@@ -152,10 +152,17 @@ def on_update(request):
         )
         return HttpResponseForbidden("Stream was preparing and is now active. Retry")
 
-    if not stream.is_valid_at(now):
-        print("[UPDATE] Stream is not valid at %s" % (now))
-        return HttpResponseForbidden("Stream is not valid now")
+    # If stream was active and is now inactive, force disconnection
+    if stream.is_active_at(last_update) and not stream.is_active_at(now):
+        print("[UPDATE] Stream was active and is now inactive. Force disconnection.")
+        return HttpResponseForbidden("Stream was active and is now inactive. Retry")
 
+    # If stream is not valid and there is no test RTMP URL for this event, force disconnection
+    if not stream.is_valid_at(now) and not stream.event.test_rtmp_url:
+        print("[UPDATE] Stream is not valid. Disconnect.")
+        return HttpResponseForbidden("Stream is not valid")
+
+    # Otherwise, allow
     return HttpResponse("OK")
 
 
