@@ -235,6 +235,12 @@ class Stream(models.Model):
             tpl = Template(self.event.resolved_rtmp_url)
             return tpl.safe_substitute(id=self.id, key=self.key)
 
+    @property
+    def resolved_test_rtmp_url(self):
+        if self.event.test_rtmp_url:
+            tpl = Template(self.event.resolved_test_rtmp_url)
+            return tpl.safe_substitute(id=self.id, key=self.key)
+
 
 class StreamNotification(models.Model):
     class Kinds(models.TextChoices):
