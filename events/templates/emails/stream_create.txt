@@ -1,16 +1,21 @@
 Hi $name,
 
-Thank you for signing up on "$event_name".
+Thank you for signing up for a slot on the "$event_name" event.
 
-Here's some general information about your stream:
+Important information about your stream:
 
 * Starts at: $starts_at
 * Ends at: $ends_at
 * RTMP server URL: $rtmp_url
 * Stream key: $key
 
-I will notify you again $preparation_time minutes before your stream starts,
+You will be notified again $preparation_time minutes before your stream starts,
 so you can prepare.
+
+Please review the Live Stream Guide closely.
+It has important information to help you prepare for streaming.
+
+There is also a reference guide for OBS settings in GitHub. Both links are below.
 
 $support_channels_text
 

@@ -26,8 +26,9 @@ def get_formatted_stream_timeframe(stream):
 def get_support_channels_test(stream):
     if stream.event.support_urls.exists():
         return (
-            "If you have any questions, please reach out to our support channels:\n"
+            "Streaming documentation and support links.\n
+            If you have any questions, please reach out to our support channel:\n"
             + "\n".join(f"* {u.name}: {u.url}" for u in stream.event.support_urls.all())
         )
     else:
-        return "If you have any questions, please reach out to our support channels"
+        return "If you have any questions, please reach out to our support channel."
