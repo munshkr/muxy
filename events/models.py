@@ -240,6 +240,10 @@ class Stream(models.Model):
         if self.event.test_rtmp_url:
             tpl = Template(self.event.resolved_test_rtmp_url)
             return tpl.safe_substitute(id=self.id, key=self.key)
+        
+    class Meta:
+        unique_together = [['event', 'starts_at'], ['event', 'ends_at']]
+
 
 
 class StreamNotification(models.Model):
